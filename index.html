@@ -65,11 +65,11 @@ body::after{content:'';position:fixed;top:-50%;left:-50%;right:-50%;bottom:-50%;
 /* GAME */
 .game{padding-top:16px}
 .game-inner{transition:opacity .25s ease}
-.progress-wrap{margin-bottom:20px;padding:14px 18px;background:var(--card);backdrop-filter:var(--glass);-webkit-backdrop-filter:var(--glass);border:1px solid rgba(0,212,255,0.12);border-radius:10px}
+.progress-wrap{margin-bottom:20px;padding:16px 20px;background:var(--card);backdrop-filter:var(--glass);-webkit-backdrop-filter:var(--glass);border:1px solid rgba(0,212,255,0.12);border-radius:10px}
 .progress-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.progress-phase{font-size:12px;color:var(--accent);font-weight:600;letter-spacing:1px}
-.progress-age{font-size:12px;color:var(--sub);font-family:monospace}
-.progress-track{width:100%;height:4px;background:var(--bar-bg);border-radius:2px;overflow:hidden}
+.progress-phase{font-size:14px;color:var(--accent);font-weight:600;letter-spacing:1px}
+.progress-age{font-size:14px;color:var(--sub);font-family:monospace}
+.progress-track{width:100%;height:5px;background:var(--bar-bg);border-radius:2px;overflow:hidden}
 .progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;transition:width .5s ease;box-shadow:0 0 6px var(--accent-glow)}
 .q-scenario{font-size:16px;color:var(--sub);line-height:1.9;margin-bottom:20px;padding:18px;background:var(--card);backdrop-filter:var(--glass);-webkit-backdrop-filter:var(--glass);border:1px solid rgba(0,212,255,0.08);border-radius:var(--radius);position:relative}
 .q-scenario::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent-glow),transparent)}
@@ -82,12 +82,12 @@ body::after{content:'';position:fixed;top:-50%;left:-50%;right:-50%;bottom:-50%;
 .option-desc{font-size:14px;color:var(--sub);margin-top:3px}
 .inline-effects{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;animation:effectsFadeIn .4s ease both}
 .inline-effects.hiding{animation:effectsFadeOut .3s ease both}
-.effect-tag{font-size:11px;font-weight:600;padding:2px 7px;border-radius:4px;font-family:monospace}
+.effect-tag{font-size:13px;font-weight:600;padding:3px 8px;border-radius:4px;font-family:monospace}
 .effect-tag.positive{color:var(--success);background:rgba(0,255,136,0.1)}
 .effect-tag.negative{color:var(--danger);background:rgba(255,68,68,0.1)}
 .transition-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .35s}
 .transition-overlay.show{opacity:1;pointer-events:all}
-.transition-text{font-size:15px;color:var(--sub);text-align:center;padding:0 32px;line-height:1.9;max-width:380px;font-style:italic}
+.transition-text{font-size:17px;color:var(--sub);text-align:center;padding:0 32px;line-height:1.9;max-width:400px;font-style:italic}
 
 /* RESULT */
 .result{align-items:center}
@@ -202,10 +202,10 @@ body::after{content:'';position:fixed;top:-50%;left:-50%;right:-50%;bottom:-50%;
 
 /* ORIGIN */
 .origin{padding-top:40px}
-.origin-step{font-size:11px;color:var(--accent);font-weight:600;letter-spacing:2px;margin-bottom:12px;font-family:monospace}
-.origin-q{font-size:20px;font-weight:700;margin-bottom:22px;line-height:1.4}
+.origin-step{font-size:13px;color:var(--accent);font-weight:600;letter-spacing:2px;margin-bottom:12px;font-family:monospace}
+.origin-q{font-size:22px;font-weight:700;margin-bottom:22px;line-height:1.4}
 .origin-options{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
-.origin-opt{padding:14px 18px;background:var(--card);backdrop-filter:var(--glass);-webkit-backdrop-filter:var(--glass);border:1px solid rgba(0,212,255,0.1);border-radius:var(--radius);cursor:pointer;font-size:14px;font-weight:500;transition:all .25s}
+.origin-opt{padding:18px 20px;background:var(--card);backdrop-filter:var(--glass);-webkit-backdrop-filter:var(--glass);border:1px solid rgba(0,212,255,0.1);border-radius:var(--radius);cursor:pointer;font-size:16px;font-weight:500;transition:all .25s}
 .origin-opt:hover{border-color:var(--accent);background:var(--card-hover);transform:translateX(4px)}
 .origin-opt.selected{border-color:var(--accent);background:rgba(0,212,255,0.06);font-weight:600;box-shadow:var(--glow-shadow)}
 
