@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -71,15 +72,15 @@ body::after{content:'';position:fixed;top:-50%;left:-50%;right:-50%;bottom:-50%;
 .progress-age{font-size:12px;color:var(--sub);font-family:monospace}
 .progress-track{width:100%;height:4px;background:var(--bar-bg);border-radius:2px;overflow:hidden}
 .progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;transition:width .5s ease;box-shadow:0 0 6px var(--accent-glow)}
-.q-scenario{font-size:14px;color:var(--sub);line-height:1.9;margin-bottom:20px;padding:18px;background:var(--card);backdrop-filter:var(--glass);-webkit-backdrop-filter:var(--glass);border:1px solid rgba(0,212,255,0.08);border-radius:var(--radius);position:relative}
+.q-scenario{font-size:16px;color:var(--sub);line-height:1.9;margin-bottom:20px;padding:18px;background:var(--card);backdrop-filter:var(--glass);-webkit-backdrop-filter:var(--glass);border:1px solid rgba(0,212,255,0.08);border-radius:var(--radius);position:relative}
 .q-scenario::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent-glow),transparent)}
 .options{display:flex;flex-direction:column;gap:10px}
-.option-card{padding:15px 18px;background:var(--card);backdrop-filter:var(--glass);-webkit-backdrop-filter:var(--glass);border:1px solid rgba(0,212,255,0.1);border-radius:var(--radius);cursor:pointer;transition:all .25s;line-height:1.5;position:relative}
+.option-card{padding:18px 20px;background:var(--card);backdrop-filter:var(--glass);-webkit-backdrop-filter:var(--glass);border:1px solid rgba(0,212,255,0.1);border-radius:var(--radius);cursor:pointer;transition:all .25s;line-height:1.5;position:relative}
 .option-card:hover{border-color:var(--accent);background:var(--card-hover);box-shadow:var(--glow-shadow);transform:translateX(4px)}
 .option-card.selected{border-color:var(--accent);background:rgba(0,212,255,0.08);pointer-events:none;box-shadow:0 0 20px var(--accent-glow)}
 .option-card.disabled{opacity:0.4;pointer-events:none}
-.option-title{font-size:14px;font-weight:600}
-.option-desc{font-size:12px;color:var(--sub);margin-top:3px}
+.option-title{font-size:16px;font-weight:600}
+.option-desc{font-size:14px;color:var(--sub);margin-top:3px}
 .inline-effects{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;animation:effectsFadeIn .4s ease both}
 .inline-effects.hiding{animation:effectsFadeOut .3s ease both}
 .effect-tag{font-size:11px;font-weight:600;padding:2px 7px;border-radius:4px;font-family:monospace}
@@ -491,67 +492,67 @@ const CAREER_TIMELINE = {
 const RESULT_TYPES = [
   {id:'hustler',name:'卷王人生',emoji:'🔥',rarity:'8.2%',color:'#FF4500',oneliner:'你用尽全力奔跑，终于跑到了很多人到不了的地方。',
    condition:s=>s.career>=75&&s.wealth>=65&&s.freedom<55,
-   profile:{city:'一线城市',job:'大厂高级管理者',income:'50\~80W',love:'有伴侣但陪伴不多',savings:'80\~150W'},
+   profile:{city:'一线城市',job:'大厂高级管理者',income:'65\~100W',love:'有伴侣但陪伴不多',savings:'100\~200W'},
    story:'你是一个愿意为成长牺牲一部分自由的人。\n\n22岁，你选择了大城市和更高的职业起点。25岁，你抓住了每一个晋升机会。28岁，你放弃了一次慢下来的机会。\n\n你的收入超过了同龄人的大多数，但日历上很少有属于自己的空白时间。\n\n你拥有了不错的事业，也终于开始重新思考：**"如果当初选择另一条路，我现在会不会更快乐？"**',
    parallelHint:'你失去的自由和陪伴，也许是另一种人生里最珍贵的东西。'},
   {id:'idealist',name:'自由理想主义者',emoji:'🌊',rarity:'5.7%',color:'#00BCD4',oneliner:'你选择了一条少有人走的路，风景果然不一样。',
    condition:s=>s.freedom>=70&&s.happiness>=60&&s.career<65,
-   profile:{city:'新一线或小城',job:'自由职业 / 远程工作',income:'15\~25W',love:'长期稳定伴侣',savings:'20\~40W'},
+   profile:{city:'新一线或小城',job:'自由职业 / 远程工作',income:'18\~28W',love:'长期稳定伴侣',savings:'25\~45W'},
    story:'你始终相信，人生不该只有一条轨道。\n\n你放弃过更高的薪水，拒绝过晋升，也离开过大城市。你的朋友有时不理解你为什么不走那条"更稳的路"。\n\n但你知道：每天醒来不讨厌今天，就是你对自己最好的交代。\n\n你没有最多的存款，但拥有大把可以自由支配的时间。偶尔也会想：**"如果当初拼一把，现在会不会不一样？"**',
    parallelHint:'你得到的自由，是另一条路上最稀缺的资源。'},
   {id:'romantic',name:'浪漫冒险家',emoji:'💫',rarity:'11.3%',color:'#FF69B4',oneliner:'你为最重要的人做了最重要的选择。',
    condition:s=>s.love>=70&&s.happiness>=60,
-   profile:{city:'伴侣所在城市',job:'稳定职业',income:'20\~35W',love:'深度亲密关系',savings:'25\~50W'},
+   profile:{city:'伴侣所在城市',job:'稳定职业',income:'25\~40W',love:'深度亲密关系',savings:'30\~60W'},
    story:'你是那种"为了对的人可以改变计划"的人。\n\n28岁那年的那个决定，改变了你人生的方向——不是为了更高的薪水或更好的机会，而是为了一个人。\n\n你的事业不是最耀眼的，存款也不是最厚的。但每天回到家的时候，你知道有人在等你。\n\n你偶尔想：**"如果当初选了事业，现在的我会是什么样？"**',
    parallelHint:'你拥有的情感连接，是很多事业成功者最羡慕的东西。'},
   {id:'ambitious',name:'野心现实主义者',emoji:'👑',rarity:'4.1%',color:'#FFD700',oneliner:'你既有野心又有执行力，走到哪都不会太差。',
    condition:s=>s.career>=70&&s.wealth>=70,
-   profile:{city:'一线城市',job:'创业者 / 高管',income:'60\~100W',love:'有但投入不多',savings:'100\~200W'},
+   profile:{city:'一线城市',job:'创业者 / 高管',income:'80\~150W',love:'有但投入不多',savings:'150\~300W'},
    story:'你是一个目标非常清晰的人。每一次选择，你都在计算"哪个选项的回报更高"。\n\n你从不后悔。因为每一步都是你自己想清楚后走的。\n\n但有时候深夜会突然想：这些年到底是在为自己活，还是在为某个目标活？\n\n你拥有了大多数人羡慕的履历和收入。**但你心里知道，你还没找到那个让你"不工作也很快乐"的答案。**',
    parallelHint:'你赢得的成就，是否值得你付出的代价？另一种人生会告诉你答案。'},
   {id:'stable',name:'稳定幸福派',emoji:'☀️',rarity:'14.6%',color:'#4CAF50',oneliner:'你没有最高的分数，但每一项都在及格线以上——这本身就很了不起。',
    condition:s=>s.happiness>=65&&s.love>=60&&s.career>=45&&s.wealth>=45&&s.freedom>=45,
-   profile:{city:'新一线 / 老家',job:'稳定职业',income:'25\~40W',love:'稳定幸福',savings:'40\~80W'},
+   profile:{city:'新一线 / 老家',job:'稳定职业',income:'30\~50W',love:'稳定幸福',savings:'50\~100W'},
    story:'你不是没有过野心，只是你更早想明白了一件事：**人生不是竞赛，活得舒服才是本事。**\n\n你的每一次选择，都在往"让自己安心"的方向走。你有稳定的工作、不错的收入、值得信任的伴侣。\n\n朋友圈里你看起来平平无奇，但你很少在凌晨三点因为焦虑而睡不着。\n\n你偶尔想：**"如果当初再大胆一点呢？"** 但想完就睡着了。',
    parallelHint:'你的平衡，是很多人花了很多年都没学会的能力。'},
   {id:'fighter',name:'城市奋斗者',emoji:'🏙️',rarity:'12.8%',color:'#1E90FF',oneliner:'你正在为未来储蓄，代价是现在。',
    condition:s=>s.career>=65&&s.freedom<50&&s.happiness<60,
-   profile:{city:'一线城市',job:'中层管理 / 资深专家',income:'30\~50W',love:'不确定',savings:'50\~90W'},
+   profile:{city:'一线城市',job:'中层管理 / 资深专家',income:'40\~65W',love:'不确定',savings:'65\~120W'},
    story:'你在大城市扎下了根，但这根扎得并不轻松。\n\n每一天都是在"做完这个项目就好了""熬过这一年就好了"中度过。你不确定终点在哪，但你知道不能停。\n\n你想过离开，但最后还是留下了——因为你已经付出了太多，走不了了。\n\n你的简历很漂亮，银行卡也还行。**但你记不清上一次"什么都不做"是什么时候了。**',
    parallelHint:'你在坚持的东西，另一个你已经放弃了——但她也过得不错。'},
   {id:'hedonist',name:'及时行乐派',emoji:'🎉',rarity:'6.4%',color:'#9C27B0',oneliner:'你活成了很多人想活但不敢活的样子。',
    condition:s=>s.happiness>=70&&s.freedom>=65&&s.wealth<55,
-   profile:{city:'换过好几个',job:'不固定 / 兴趣驱动',income:'12\~20W',love:'丰富但不固定',savings:'10\~25W'},
+   profile:{city:'换过好几个',job:'不固定 / 兴趣驱动',income:'15\~25W',love:'丰富但不固定',savings:'15\~30W'},
    story:'你一直在追一种"此刻"的感觉。\n\n不喜欢的工作你会辞掉，不开心的城市你会离开。你的朋友遍布全国，你的收入不算高但花得痛快。\n\n你知道这样不"稳妥"，但你更害怕的是：**60岁回头看，发现自己从来没按自己的意思活过一天。**\n\n你不确定明年在哪，但你确定今天很快乐。',
    parallelHint:'你赢了自由，但你的银行卡也在提醒你——不确定性本身也是有代价的。'},
   {id:'minimalist',name:'低欲望生活家',emoji:'🍃',rarity:'7.5%',color:'#8BC34A',oneliner:'你很早就想通了很多人一辈子想不通的事。',
    condition:s=>s.freedom>=65&&s.happiness>=60&&s.career<55&&s.wealth<55,
-   profile:{city:'小城 / 老家',job:'远程 / 轻量工作',income:'10\~18W',love:'淡然但满足',savings:'15\~30W'},
+   profile:{city:'小城 / 老家',job:'远程 / 轻量工作',income:'12\~20W',love:'淡然但满足',savings:'18\~35W'},
    story:'你不是没有能力，只是不想那么累。\n\n你看着身边的人卷来卷去，有时候也会怀疑自己是不是太佛了。但你很快就会想到：每天下班后有两小时做饭、三小时看书、周末可以发呆，这些东西在很多人眼里是奢侈品。\n\n你的存款不多但够花，你不焦虑也不兴奋。**你只是在安静地过着自己的日子。**',
    parallelHint:'你放弃的那些可能性，有时候半夜也会来找你——但天亮了就走了。'},
   {id:'hexagon',name:'全能六边形战士',emoji:'⭐',rarity:'3.2%',color:'#00E5FF',oneliner:'你是那个让人觉得"她怎么什么都有"的人。',
    condition:s=>s.career>=58&&s.wealth>=58&&s.love>=58&&s.freedom>=55&&s.happiness>=55,
-   profile:{city:'新一线',job:'行业中坚力量',income:'35\~55W',love:'稳定幸福',savings:'60\~100W'},
+   profile:{city:'新一线',job:'行业中坚力量',income:'45\~70W',love:'稳定幸福',savings:'80\~130W'},
    story:'你没有把所有筹码押在一个方向。\n\n事业上你做到了不错的位置，但没有为此牺牲全部的生活；感情上你遇到了对的人，也给了对方足够的空间；钱赚得不算最多，但花得明白。\n\n你的人生不是最刺激的那种。但每当朋友向你诉苦"事业和生活怎么选"的时候，你总是不知道该怎么安慰——**因为你好像没怎么面对过这个问题。**',
    parallelHint:'平衡本身就是一种天赋。但如果你把所有能量集中到一个方向，会发生什么？'},
   {id:'explorer',name:'跨界探索者',emoji:'🧭',rarity:'4.8%',color:'#FF6F00',oneliner:'你的人生简历，比大多数人的朋友圈都精彩。',
    condition:s=>{const max=Math.max(s.career,s.wealth,s.love,s.freedom,s.happiness),min=Math.min(s.career,s.wealth,s.love,s.freedom,s.happiness);return max-min>=30&&s.freedom>=55;},
-   profile:{city:'没固定过',job:'做过好几种完全不同的事',income:'15\~40W',love:'精彩但动荡',savings:'20\~50W'},
+   profile:{city:'没固定过',job:'做过好几种完全不同的事',income:'20\~50W',love:'精彩但动荡',savings:'25\~60W'},
    story:'你的简历不是一条直线，而是一张地图。\n\n你做过完全不相关的行业，住过完全不同的城市，交过完全不同圈子的朋友。每次别人问你"你到底想做什么"，你都需要想一会儿。\n\n你不是什么都不专，你是什么都想试试。人生这么短，只走一条路太亏了。\n\n你最怕的不是失败，是无聊。**你用丰富来对抗平庸，哪怕代价是永远没有"稳定"这两个字。**',
    parallelHint:'如果把你所有的能量集中到一个方向，你可能早就成了那个领域的专家——但你会愿意吗？'},
   {id:'caretaker',name:'温暖守护者',emoji:'🤲',rarity:'9.1%',color:'#E91E63',oneliner:'你总是先想到别人，然后才想到自己。',
    condition:s=>s.love>=65&&s.happiness>=55&&s.career<65&&s.freedom<60,
-   profile:{city:'离家人近的城市',job:'稳定且不太忙的工作',income:'18\~30W',love:'被需要的感觉',savings:'30\~60W'},
+   profile:{city:'离家人近的城市',job:'稳定且不太忙的工作',income:'22\~35W',love:'被需要的感觉',savings:'35\~70W'},
    story:'你做选择的时候，脑子里第一个蹦出来的问题不是"我想要什么"，而是"他们会怎么样"。\n\n你为了陪家人放弃过外地的机会，为了伴侣调整过自己的节奏，为了朋友推掉过重要的事。\n\n有人说你太容易妥协。但你知道——你不是在妥协，你是在选择你认为更重要的东西。\n\n你的朋友圈不大，但每一个人都信任你。**你用陪伴丈量人生的重量，而不是用头衔。**',
    parallelHint:'你为别人让出的那些机会，有一天你会不会想要回来？'},
   {id:'latebloomer',name:'大器晚成型',emoji:'🌅',rarity:'6.9%',color:'#FF9800',oneliner:'你前半程走得慢，但方向越来越清楚。',
    condition:s=>{const sum=s.career+s.wealth+s.love+s.freedom+s.happiness;return sum>=280&&sum<=340&&s.happiness>=55;},
-   profile:{city:'适合自己的城市',job:'终于找到方向的职业',income:'20\~35W',love:'慢慢靠近的人',savings:'25\~50W'},
+   profile:{city:'适合自己的城市',job:'终于找到方向的职业',income:'25\~40W',love:'慢慢靠近的人',savings:'30\~60W'},
    story:'你的前半段人生好像一直在试错。\n\n该果断的时候犹豫了，该坚持的时候放弃了，该表白的时候沉默了。你一度觉得自己什么都没做好。\n\n但回头看，那些"浪费"的时间其实都在帮你排除错误答案。你现在终于知道自己要什么了——虽然起步比别人晚了几年。\n\n你不是不优秀，**你只是需要更多时间来认识自己。而你终于找到了。**',
    parallelHint:'你用来迷茫的那些年，另一个你可能用来冲刺了——但谁更快乐不一定。'},
   {id:'ordinary',name:'平凡也是答案',emoji:'🌙',rarity:'5.4%',color:'#B0BEC5',oneliner:'没有谁的人生需要活成别人的模板。',
    condition:()=>true,
-   profile:{city:'普通城市',job:'普通职业',income:'15\~25W',love:'有牵挂的人',savings:'25\~50W'},
+   profile:{city:'普通城市',job:'普通职业',income:'18\~28W',love:'有牵挂的人',savings:'28\~55W'},
    story:'你的人生没有什么戏剧性的转折。\n\n每一次选择，你都做了当时觉得"还不错"的那个。没有特别冒险，也没有特别保守。\n\n你过着一种不好不坏的生活。但最近你开始意识到：**所谓的"不好不坏"，可能就是很多人苦苦追求的"安稳"。**\n\n平凡也是一种人生答案。而且是大多数人最终会走到的那个答案。',
    parallelHint:'如果你把其中一次"还不错"换成"冒一次险"呢？'}
 ];
