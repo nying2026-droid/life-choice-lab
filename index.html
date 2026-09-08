@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>人生选择实验室</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a1a;--bg2:#0f0f2a;--card:rgba(26,26,46,0.85);--card-solid:#1a1a2e;--card-hover:rgba(42,42,78,0.85);
+  --text:#ffffff;--sub:#7a8ba0;
+  --accent:#00d4ff;--accent-glow:rgba(0,212,255,0.3);--accent-bright:rgba(0,212,255,0.6);
+  --accent2:#7C83FD;--accent2-glow:rgba(124,131,253,0.3);
+  --bar-bg:#1a2a3e;--bar-fg:#00d4ff;
+  --danger:#ff4444;--success:#00ff88;--warning:#F0A500;
+  --radius:12px;
+  --shadow:0 0 20px rgba(0,212,255,0.08);
+  --glow-shadow:0 0 15px rgba(0,212,255,0.2);
+  --glass:saturate(180%) blur(12px);
+}
+html{overflow-x:hidden}
+body{min-height:100vh;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB",sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;overflow-x:hidden;overflow-y:auto}
+body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;
+  background:
+    radial-gradient(ellipse 600px 400px at 15% 30%,rgba(0,212,255,0.18) 0%,transparent 70%),
+    radial-gradient(ellipse 500px 500px at 85% 15%,rgba(124,131,253,0.14) 0%,transparent 70%),
+    radial-gradient(ellipse 400px 600px at 50% 85%,rgba(150,0,255,0.12) 0%,transparent 70%),
+    radial-gradient(ellipse 300px 300px at 70% 60%,rgba(0,212,255,0.08) 0%,transparent 70%);
+  pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;top:-50%;left:-50%;right:-50%;bottom:-50%;
+  background:radial-gradient(ellipse at center,rgba(0,212,255,0.06) 0%,transparent 50%);
+  animation:nebulaDrift 20s ease-in-out infinite;pointer-events:none;z-index:0}
+@keyframes nebulaDrift{0%{transform:translate(0,0) rotate(0deg)}33%{transform:translate(3%,2%) rotate(1deg)}66%{transform:translate(-2%,3%) rotate(-1deg)}100%{transform:translate(0,0) rotate(0deg)}}
+
+.screen{display:none;min-height:100vh;padding:24px 20px 40px;max-width:480px;margin:0 auto;position:relative;z-index:1}
+.screen.active{display:flex;flex-direction:column}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes glowText{0%,100%{text-shadow:0 0 8px var(--accent-glow)}50%{text-shadow:0 0 20px var(--accent-bright)}}
+@keyframes barGrow{from{width:0}to{width:var(--w)}}
+@keyframes cosmicBorderGlow{0%,100%{border-color:rgba(0,212,255,0.15)}50%{border-color:rgba(0,212,255,0.4)}}
+@keyframes scanMove{0%{top:0}100%{top:100%}}
+@keyframes starTwinkle{0%,100%{opacity:0.3;transform:scale(1)}50%{opacity:1;transform:scale(1.8)}}
+@keyframes floatUp{0%{opacity:0;transform:translateY(20px) scale(0.5)}30%{opacity:0.7;transform:translateY(-10px) scale(1)}70%{opacity:0.4}100%{opacity:0;transform:translateY(-100px) scale(0.3)}}
+@keyframes orbit{0%{transform:rotate(0deg) translateX(var(--orbit-r)) rotate(0deg)}100%{transform:rotate(360deg) translateX(var(--orbit-r)) rotate(-360deg)}}
+@keyframes glowLinePulse{0%,100%{opacity:0.3}50%{opacity:0.8}}
+@keyframes effectsFadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes effectsFadeOut{from{opacity:1}to{opacity:0;transform:translateY(-4px)}}
+@keyframes gridPulse{0%,100%{opacity:0.06}50%{opacity:0.12}}
+@keyframes meteorFall{0%{transform:translate(0,0) rotate(-45deg);opacity:0}10%{opacity:1}90%{opacity:0.9}100%{transform:translate(-300px,300px) rotate(-45deg);opacity:0}}
+
+/* HOME */
+.home{align-items:center;justify-content:center;text-align:center}
+.home-title{font-size:36px;font-weight:800;letter-spacing:6px;line-height:1.3;margin-bottom:14px;color:var(--accent);animation:glowText 3s ease-in-out infinite}
+.home-subtitle{font-size:15px;color:var(--sub);line-height:1.8;margin-bottom:44px}
+.btn-primary{display:inline-flex;align-items:center;justify-content:center;padding:16px 52px;background:transparent;color:var(--accent);border:1px solid var(--accent);border-radius:4px;font-size:16px;font-weight:600;cursor:pointer;transition:all .3s;letter-spacing:2px;position:relative;overflow:hidden;animation:cosmicBorderGlow 3s ease-in-out infinite}
+.btn-primary::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(0,212,255,0.12),transparent);transition:left .6s}
+.btn-primary:hover{background:rgba(0,212,255,0.08);box-shadow:var(--glow-shadow);transform:translateY(-2px)}
+.btn-primary:hover::before{left:100%}
+.home-meta{margin-top:28px;font-size:12px;color:var(--sub);letter-spacing:1px}
+.home-orbits{position:absolute;width:300px;height:300px;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
+.orbit-dot{position:absolute;width:4px;height:4px;background:var(--accent);border-radius:50%;top:50%;left:50%;margin:-2px;animation:orbit linear infinite;opacity:0.3}
+.orbit-ring{position:absolute;top:50%;left:50%;border:1px solid rgba(0,212,255,0.06);border-radius:50%;transform:translate(-50%,-50%)}
+
+/* GAME */
+.game{padding-top:16px}
+.game-inner{transition:opacity .25s ease}
+.progress-wrap{margin-bottom:20px;padding:14px 18px;background:var(--card);backdrop-filter:var(--glass);-webkit-backdrop-filter:var(--glass);border:1px solid rgba(0,212,255,0.12);border-radius:10px}
+.progress-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.progress-phase{font-size:12px;color:var(--accent);font-weight:600;letter-spacing:1px}
+.progress-age{font-size:12px;color:var(--sub);font-family:monospace}
+.progress-track{width:100%;height:4px;background:var(--bar-bg);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;transition:width .5s ease;box-shadow:0 0 6px var(--accent-glow)}
+.q-scenario{font-size:14px;color:var(--sub);line-height:1.9;margin-bottom:20px;padding:18px;background:var(--card);backdrop-filter:var(--glass);-webkit-backdrop-filter:var(--glass);border:1px solid rgba(0,212,255,0.08);border-radius:var(--radius);position:relative}
+.q-scenario::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent-glow),transparent)}
+.options{display:flex;flex-direction:column;gap:10px}
+.option-card{padding:15px 18px;background:var(--card);backdrop-filter:var(--glass);-webkit-backdrop-filter:var(--glass);border:1px solid rgba(0,212,255,0.1);border-radius:var(--radius);cursor:pointer;transition:all .25s;line-height:1.5;position:relative}
+.option-card:hover{border-color:var(--accent);background:var(--card-hover);box-shadow:var(--glow-shadow);transform:translateX(4px)}
+.option-card.selected{border-color:var(--accent);background:rgba(0,212,255,0.08);pointer-events:none;box-shadow:0 0 20px var(--accent-glow)}
+.option-card.disabled{opacity:0.4;pointer-events:none}
+.option-title{font-size:14px;font-weight:600}
+.option-desc{font-size:12px;color:var(--sub);margin-top:3px}
+.inline-effects{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;animation:effectsFadeIn .4s ease both}
+.inline-effects.hiding{animation:effectsFadeOut .3s ease both}
+.effect-tag{font-size:11px;font-weight:600;padding:2px 7px;border-radius:4px;font-family:monospace}
+.effect-tag.positive{color:var(--success);background:rgba(0,255,136,0.1)}
+.effect-tag.negative{color:var(--danger);background:rgba(255,68,68,0.1)}
+.transition-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .35s}
+.transition-overlay.show{opacity:1;pointer-events:all}
+.transition-text{font-size:15px;color:var(--sub);text-align:center;padding:0 32px;line-height:1.9;max-width:380px;font-style:italic}
+
+/* RESULT */
+.result{align-items:center}
+.result-header{text-align:center;margin-bottom:32px;animation:slideUp .6s ease}
+.result-label{font-size:12px;color:var(--accent);font-weight:600;letter-spacing:4px;margin-bottom:12px}
+.result-emoji{font-size:72px;margin-bottom:14px;filter:drop-shadow(0 0 20px rgba(0,212,255,0.3))}
+.result-type{font-size:34px;font-weight:800;margin-bottom:10px;color:var(--accent);animation:glowText 3s ease-in-out infinite}
+.result-oneliner{font-size:15px;color:#b0bec5;line-height:1.8;max-width:360px;margin:0 auto}
+.profile-card{width:100%;background:linear-gradient(145deg,rgba(20,20,50,0.95),rgba(12,12,35,0.98));backdrop-filter:var(--glass);-webkit-backdrop-filter:var(--glass);border:1px solid rgba(0,212,255,0.18);border-radius:var(--radius);padding:24px;margin-bottom:22px;animation:slideUp .6s ease .1s both;position:relative;overflow:hidden;box-shadow:0 4px 30px rgba(0,0,0,0.3),inset 0 1px 0 rgba(0,212,255,0.08)}
+.profile-card::before{content:'';display:block;height:2px;background:linear-gradient(90deg,transparent,rgba(0,212,255,0.5),rgba(124,131,253,0.4),transparent);margin-bottom:18px}
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.profile-item{text-align:center;padding:14px 10px;background:rgba(0,212,255,0.03);border-radius:10px;border:1px solid rgba(0,212,255,0.08);transition:all .3s}
+.profile-item:hover{border-color:rgba(0,212,255,0.2);background:rgba(0,212,255,0.06)}
+.profile-item .label{font-size:12px;color:var(--sub);margin-bottom:6px;letter-spacing:1px}
+.profile-item .value{font-size:16px;font-weight:700;color:#e0e8f0}
+.radar-wrap{width:100%;background:linear-gradient(145deg,rgba(20,20,50,0.95),rgba(12,12,35,0.98));backdrop-filter:var(--glass);-webkit-backdrop-filter:var(--glass);border:1px solid rgba(0,212,255,0.18);border-radius:var(--radius);padding:24px;margin-bottom:22px;animation:slideUp .6s ease .2s both;text-align:center;position:relative;overflow:hidden;box-shadow:0 4px 30px rgba(0,0,0,0.3),inset 0 1px 0 rgba(0,212,255,0.08)}
+.radar-wrap canvas{max-width:300px;margin:0 auto;display:block}
+.attrs-list{width:100%;margin-bottom:22px;animation:slideUp .6s ease .3s both}
+.attr-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.attr-name{width:36px;font-size:13px;font-weight:700;text-align:right;flex-shrink:0;color:var(--sub)}
+.attr-bar-bg{flex:1;height:8px;background:var(--bar-bg);border-radius:4px;overflow:hidden}
+.attr-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;animation:barGrow 1s ease both;box-shadow:0 0 6px var(--accent-glow)}
+.attr-val{width:30px;font-size:14px;font-weight:700;text-align:right;flex-shrink:0;font-family:monospace;color:var(--accent)}
+.story-card{width:100%;background:linear-gradient(145deg,rgba(20,20,50,0.95),rgba(12,12,35,0.98));backdrop-filter:var(--glass);-webkit-backdrop-filter:var(--glass);border:1px solid rgba(0,212,255,0.18);border-radius:var(--radius);padding:24px;margin-bottom:22px;animation:slideUp .6s ease .4s both;position:relative;overflow:hidden;box-shadow:0 4px 30px rgba(0,0,0,0.3),inset 0 1px 0 rgba(0,212,255,0.08)}
+.story-card p{font-size:14px;line-height:2;color:#b0bec5;margin-bottom:12px}
+.story-card p:last-child{margin-bottom:0}
+.story-card strong{color:#fff;text-shadow:0 0 8px rgba(0,212,255,0.3)}
+.section-label{font-size:13px;color:var(--accent);font-weight:700;margin-bottom:16px;letter-spacing:3px;text-shadow:0 0 10px rgba(0,212,255,0.2)}
+
+/* PARALLEL */
+.parallel-section{width:100%;animation:slideUp .6s ease .5s both;margin-bottom:20px}
+.parallel-title{font-size:20px;font-weight:800;text-align:center;margin-bottom:18px;color:var(--accent);text-shadow:0 0 12px rgba(0,212,255,0.3)}
+.parallel-changes{margin-bottom:16px;padding:16px;background:var(--card);backdrop-filter:var(--glass);-webkit-backdrop-filter:var(--glass);border:1px solid rgba(0,212,255,0.08);border-radius:var(--radius)}
+.parallel-change-item{font-size:12px;color:var(--sub);line-height:1.7;margin-bottom:8px;padding-left:14px;border-left:2px solid var(--accent-glow);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.parallel-change-item:last-child{margin-bottom:0}
+.parallel-change-item .age-tag{color:var(--accent);font-weight:700;font-family:monospace;background:rgba(0,212,255,0.06);padding:1px 6px;border-radius:3px;font-size:11px}
+.parallel-change-item .old-choice{text-decoration:line-through;opacity:0.5}
+.parallel-change-item .new-choice{color:var(--accent);font-weight:600}
+.parallel-compare{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.parallel-col{background:var(--card);backdrop-filter:var(--glass);-webkit-backdrop-filter:var(--glass);border:1px solid rgba(0,212,255,0.08);border-radius:var(--radius);padding:16px;text-align:center}
+.parallel-col .col-emoji{font-size:36px;margin-bottom:8px}
+.parallel-col .col-type{font-size:15px;font-weight:700;margin-bottom:14px}
+.parallel-col .col-attr{display:flex;align-items:center;gap:4px;margin-bottom:6px}
+.parallel-col .col-attr .a-name{font-size:10px;width:24px;text-align:right;color:var(--sub)}
+.parallel-col .col-attr .a-bar-bg{flex:1;height:4px;background:var(--bar-bg);border-radius:2px;overflow:hidden}
+.parallel-col .col-attr .a-bar{height:100%;border-radius:2px}
+.parallel-col .col-attr .a-val{font-size:10px;font-weight:600;width:20px;text-align:right;font-family:monospace}
+.parallel-col.mine{border-color:rgba(0,212,255,0.2)}
+.parallel-col.mine .col-type{color:var(--accent)}
+.parallel-col.alt{border-color:rgba(240,165,0,0.2)}
+.parallel-col.alt .col-type{color:var(--warning)}
+.parallel-col.alt .a-bar{background:var(--warning)}
+.parallel-diff{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:12px}
+.diff-tag{font-size:11px;font-family:monospace;padding:2px 8px;border-radius:4px}
+.diff-tag.up{color:var(--success);background:rgba(0,255,136,0.1)}
+.diff-tag.down{color:var(--danger);background:rgba(255,68,68,0.1)}
+.parallel-hint{font-size:14px;color:#b0bec5;text-align:center;line-height:1.9;margin-top:16px;font-style:italic}
+.alt-life-btn{display:block;width:100%;margin-top:16px;padding:16px;background:linear-gradient(135deg,rgba(240,165,0,0.08),rgba(255,140,0,0.04));border:1px solid rgba(240,165,0,0.25);border-radius:var(--radius);cursor:pointer;text-align:center;color:var(--warning);font-size:14px;font-weight:700;transition:all .3s;letter-spacing:1px}
+.alt-life-btn:hover{background:rgba(240,165,0,0.12);box-shadow:0 0 15px rgba(240,165,0,0.15)}
+.alt-life-detail{display:none;margin-top:14px;padding:20px;background:var(--card);backdrop-filter:var(--glass);-webkit-backdrop-filter:var(--glass);border:1px solid rgba(240,165,0,0.15);border-radius:var(--radius);animation:slideUp .4s ease}
+.alt-life-detail.show{display:block}
+.alt-life-detail .alt-header{text-align:center;margin-bottom:16px}
+.alt-life-detail .alt-emoji{font-size:40px;margin-bottom:8px}
+.alt-life-detail .alt-type{font-size:20px;font-weight:700;color:var(--warning);margin-bottom:4px}
+.alt-life-detail .alt-oneliner{font-size:12px;color:var(--sub);line-height:1.6}
+.alt-life-detail .alt-profile{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.alt-life-detail .alt-profile-item{text-align:center;padding:8px;background:rgba(240,165,0,0.03);border:1px solid rgba(240,165,0,0.08);border-radius:6px}
+.alt-life-detail .alt-profile-item .label{font-size:10px;color:var(--sub);margin-bottom:2px}
+.alt-life-detail .alt-profile-item .value{font-size:13px;font-weight:600;color:var(--warning)}
+.alt-life-detail .alt-story p{font-size:13px;line-height:1.8;color:var(--sub);margin-bottom:8px}
+.alt-life-detail .alt-story strong{color:var(--warning)}
+
+/* RESULT ENHANCED */
+.result-header{position:relative}
+.result-header::before{content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:320px;height:320px;background:radial-gradient(circle,rgba(0,212,255,0.2) 0%,rgba(124,131,253,0.08) 40%,transparent 70%);pointer-events:none;z-index:-1;animation:headerGlow 4s ease-in-out infinite}
+@keyframes headerGlow{0%,100%{opacity:0.7;transform:translateX(-50%) scale(1)}50%{opacity:1;transform:translateX(-50%) scale(1.1)}}
+.result-badge{display:inline-block;padding:8px 24px;border:1px solid rgba(0,212,255,0.35);border-radius:24px;font-size:12px;color:var(--accent);letter-spacing:4px;margin-bottom:18px;background:linear-gradient(135deg,rgba(0,212,255,0.06),rgba(124,131,253,0.04));backdrop-filter:blur(4px);text-shadow:0 0 8px rgba(0,212,255,0.3)}
+.result-emoji{position:relative}
+.result-emoji::after{content:'';position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);width:80px;height:3px;background:linear-gradient(90deg,transparent,var(--accent),var(--accent2),transparent);border-radius:2px}
+.result-type{background:linear-gradient(135deg,#00d4ff,#7C83FD,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 12px rgba(0,212,255,0.3))}
+.result-income-tag{display:inline-block;margin-top:8px;padding:6px 18px;background:linear-gradient(135deg,rgba(0,212,255,0.08),rgba(124,131,253,0.06));border:1px solid rgba(0,212,255,0.2);border-radius:20px;font-size:14px;color:var(--accent);font-weight:600;font-family:monospace}
+.result-rarity{display:inline-flex;align-items:center;gap:7px;margin-top:12px;padding:6px 18px;background:linear-gradient(135deg,rgba(124,131,253,0.1),rgba(0,212,255,0.08));border:1px solid rgba(124,131,253,0.25);border-radius:24px;font-size:13px;color:#a5b4fc;font-weight:600;letter-spacing:0.5px}
+.result-rarity .rarity-dot{width:7px;height:7px;border-radius:50%;background:#a5b4fc;box-shadow:0 0 8px rgba(165,180,252,0.5);animation:raritPulse 2s ease-in-out infinite}
+@keyframes raritPulse{0%,100%{opacity:0.6;transform:scale(1)}50%{opacity:1;transform:scale(1.4)}}
+.attr-row-enhanced{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding:10px 14px;background:rgba(255,255,255,0.02);border-radius:10px;border:1px solid rgba(255,255,255,0.04);transition:all .3s}
+.attr-row-enhanced:hover{border-color:rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);transform:translateX(2px)}
+.attr-icon{font-size:20px;flex-shrink:0}
+.attr-bar-enhanced{height:10px;border-radius:5px;position:relative;overflow:hidden}
+.attr-bar-enhanced::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.2) 50%,transparent 100%);animation:barShine 3s ease-in-out infinite}
+@keyframes barShine{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.attr-level{font-size:11px;padding:3px 8px;border-radius:4px;font-weight:700;letter-spacing:0.5px}
+.attr-level.high{color:#00ff88;background:rgba(0,255,136,0.15);text-shadow:0 0 6px rgba(0,255,136,0.3)}
+.attr-level.mid{color:#60d4ff;background:rgba(0,212,255,0.12);text-shadow:0 0 6px rgba(0,212,255,0.2)}
+.attr-level.low{color:#ffb347;background:rgba(240,165,0,0.12);text-shadow:0 0 6px rgba(240,165,0,0.2)}
+.story-card .story-lead{font-size:16px;color:#fff;font-weight:700;line-height:1.9;margin-bottom:14px;text-shadow:0 0 8px rgba(0,212,255,0.15)}
+/* glow line enhancement */
+.glow-line{height:2px;background:linear-gradient(90deg,transparent,rgba(0,212,255,0.4),rgba(124,131,253,0.5),rgba(0,212,255,0.4),transparent);margin:24px 0;animation:glowLinePulse 3s ease-in-out infinite;box-shadow:0 0 8px rgba(0,212,255,0.15)}
+
+/* BUTTONS */
+.action-btns{display:flex;flex-direction:column;gap:14px;width:100%;margin-top:16px;animation:slideUp .6s ease .6s both}
+.btn-secondary{padding:16px;background:transparent;border:1px solid rgba(0,212,255,0.3);color:var(--accent);border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;transition:all .3s;text-align:center;letter-spacing:1px}
+.btn-secondary:hover{background:rgba(0,212,255,0.08);box-shadow:0 0 20px rgba(0,212,255,0.15);transform:translateY(-2px)}
+
+/* SHARE MODAL */
+.share-modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.8);backdrop-filter:blur(6px);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+.share-modal.show{display:flex}
+.share-content{background:var(--bg2);border:1px solid rgba(0,212,255,0.15);border-radius:var(--radius);padding:20px;max-width:380px;width:100%;max-height:90vh;overflow-y:auto;text-align:center}
+.share-content canvas{width:100%;border-radius:8px;margin-bottom:16px}
+.share-tip{font-size:12px;color:var(--sub);margin-bottom:16px}
+.share-close{padding:10px 28px;background:transparent;border:1px solid var(--accent);color:var(--accent);border-radius:4px;font-size:14px;cursor:pointer;transition:all .2s}
+.share-close:hover{background:rgba(0,212,255,0.1)}
+
+/* ORIGIN */
+.origin{padding-top:40px}
+.origin-step{font-size:11px;color:var(--accent);font-weight:600;letter-spacing:2px;margin-bottom:12px;font-family:monospace}
+.origin-q{font-size:20px;font-weight:700;margin-bottom:22px;line-height:1.4}
+.origin-options{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.origin-opt{padding:14px 18px;background:var(--card);backdrop-filter:var(--glass);-webkit-backdrop-filter:var(--glass);border:1px solid rgba(0,212,255,0.1);border-radius:var(--radius);cursor:pointer;font-size:14px;font-weight:500;transition:all .25s}
+.origin-opt:hover{border-color:var(--accent);background:var(--card-hover);transform:translateX(4px)}
+.origin-opt.selected{border-color:var(--accent);background:rgba(0,212,255,0.06);font-weight:600;box-shadow:var(--glow-shadow)}
+
+/* DECORATIONS */
+.stars{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:0;overflow:hidden}
+.star{position:absolute;width:2px;height:2px;background:rgba(0,212,255,0.4);border-radius:50%;animation:starTwinkle 3s ease-in-out infinite}
+/* .glow-line defined in RESULT ENHANCED section */
+.corner-deco{position:absolute;width:16px;height:16px;border-color:var(--accent);opacity:0.55}
+.corner-deco.tl{top:-1px;left:-1px;border-top:1px solid;border-left:1px solid}
+.corner-deco.tr{top:-1px;right:-1px;border-top:1px solid;border-right:1px solid}
+.corner-deco.bl{bottom:-1px;left:-1px;border-bottom:1px solid;border-left:1px solid}
+.corner-deco.br{bottom:-1px;right:-1px;border-bottom:1px solid;border-right:1px solid}
+.card-decorated{position:relative}
+.scan-line{position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent-bright),transparent);animation:scanMove 5s linear infinite;opacity:0.2;pointer-events:none}
+.float-particle{position:absolute;width:3px;height:3px;background:var(--accent);border-radius:50%;opacity:0;animation:floatUp 6s ease-in-out infinite;pointer-events:none}
+/* Grid overlay for PC */
+.grid-overlay{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(0,212,255,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,0.06) 1px,transparent 1px);
+  background-size:60px 60px;animation:gridPulse 6s ease-in-out infinite}
+/* Meteor */
+.meteor{position:fixed;width:150px;height:2px;background:linear-gradient(90deg,rgba(0,212,255,1),rgba(124,131,253,0.6),transparent);box-shadow:0 0 8px rgba(0,212,255,0.6),0 0 20px rgba(0,212,255,0.3);pointer-events:none;z-index:0;animation:meteorFall 4s linear infinite;opacity:0}
+/* Side decoration lines for PC */
+.side-deco{position:fixed;top:20%;width:1px;height:60%;pointer-events:none;z-index:0;opacity:0}
+.side-deco.left{left:8%;background:linear-gradient(to bottom,transparent,rgba(0,212,255,0.4),transparent)}
+.side-deco.right{right:8%;background:linear-gradient(to bottom,transparent,rgba(124,131,253,0.4),transparent)}
+/* Hex grid dots for PC */
+.hex-dot{position:fixed;width:6px;height:6px;border:1px solid rgba(0,212,255,0.15);border-radius:50%;pointer-events:none;z-index:0;box-shadow:0 0 4px rgba(0,212,255,0.1)}
+/* Star trail rings */
+@keyframes orbitTrail{0%{transform:translate(-50%,-50%) rotate(0deg)}100%{transform:translate(-50%,-50%) rotate(360deg)}}
+.star-trail{position:fixed;border-radius:50%;pointer-events:none;z-index:0;border:1px solid transparent;border-top-color:rgba(0,212,255,0.15);border-right-color:rgba(124,131,253,0.08);animation:orbitTrail linear infinite}
+.star-trail.t1{width:500px;height:500px;top:20%;left:50%;animation-duration:40s;border-top-color:rgba(0,212,255,0.12)}
+.star-trail.t2{width:700px;height:700px;top:40%;left:45%;animation-duration:60s;border-top-color:rgba(124,131,253,0.1);animation-direction:reverse}
+.star-trail.t3{width:350px;height:350px;top:60%;left:55%;animation-duration:30s;border-top-color:rgba(0,212,255,0.08)}
+
+/* PC responsive */
+@media(min-width:768px){
+  .screen{max-width:540px;padding:32px 24px 48px}
+  .home-title{font-size:44px;letter-spacing:8px}
+  .result-type{font-size:32px}
+  .side-deco{opacity:0.4}
+}
+@media(min-width:1024px){
+  .screen{max-width:600px;padding:40px 28px 56px}
+  .home-title{font-size:48px}
+  .q-scenario{font-size:15px;padding:22px}
+  .option-card{padding:18px 22px}
+  .option-card:hover{transform:translateX(6px)}
+  .side-deco{opacity:0.6}
+}
+@media(min-width:1400px){
+  .screen{max-width:640px}
+  .side-deco{opacity:0.8}
+}
+</style>
+</head>
+<body>
+<div class="stars" id="stars-bg"></div>
+<div class="grid-overlay"></div>
+<div class="side-deco left"></div>
+<div class="side-deco right"></div>
+<div class="star-trail t1"></div>
+<div class="star-trail t2"></div>
+<div class="star-trail t3"></div>
+<div class="meteor" id="meteor1" style="top:12%;left:70%"></div>
+<div class="meteor" id="meteor2" style="top:35%;left:85%;animation-delay:2s;animation-duration:5s"></div>
+<div class="meteor" id="meteor3" style="top:58%;left:60%;animation-delay:3.5s;animation-duration:6s"></div>
+<div class="meteor" id="meteor4" style="top:25%;left:50%;animation-delay:5s;animation-duration:4.5s"></div>
+<div class="meteor" id="meteor5" style="top:80%;left:75%;animation-delay:7s;animation-duration:5.5s"></div>
+
+<div id="screen-home" class="screen home active">
+  <div style="position:relative">
+    <div class="home-orbits" id="home-orbits"></div>
+    <div class="home-title">人生<br>选择实验室</div>
+    <div class="home-subtitle">如果人生可以重新选择，<br>你会走哪一条路？</div>
+    <button class="btn-primary" onclick="startExperiment()">▶ 开始实验</button>
+    <div class="home-meta">一次实验，大约需要 3 分钟</div>
+  </div>
+</div>
+<div id="screen-origin" class="screen origin"></div>
+<div id="screen-game" class="screen game"><div id="game-inner" class="game-inner"></div></div>
+<div id="transition" class="transition-overlay"><div class="transition-text" id="transition-text"></div></div>
+<div id="screen-result" class="screen result"></div>
+
+
+<script>
+// ======== DATA ========
+const ORIGIN_QUESTIONS = [
+  {
+    id:'q0_1',step:'1 / 3',title:'你现在处于什么阶段？',
+    options:[
+      {id:'stage_high',title:'高中生',timeline:'student'},
+      {id:'stage_college',title:'大学生',timeline:'student'},
+      {id:'stage_graduate',title:'刚毕业',timeline:'career'},
+      {id:'stage_junior',title:'工作 1-3 年',timeline:'career'},
+      {id:'stage_mid',title:'工作 3-5 年',timeline:'career'},
+      {id:'stage_senior',title:'已经工作很久',timeline:'career'}
+    ]
+  },
+  {
+    id:'q0_2',step:'2 / 3',title:'如果只能选一个，你现在最想要——',
+    options:[
+      {id:'desire_wealth',title:'💰 财富',effects:{career:2,wealth:5,love:0,freedom:0,happiness:0}},
+      {id:'desire_freedom',title:'🕊️ 自由',effects:{career:0,wealth:0,love:0,freedom:5,happiness:2}},
+      {id:'desire_stable',title:'🏠 稳定',effects:{career:2,wealth:2,love:0,freedom:0,happiness:3}},
+      {id:'desire_achievement',title:'🏆 成就',effects:{career:5,wealth:2,love:0,freedom:0,happiness:0}},
+      {id:'desire_love',title:'❤️ 爱情',effects:{career:0,wealth:0,love:5,freedom:0,happiness:2}}
+    ]
+  },
+  {
+    id:'q0_3',step:'3 / 3',title:'你更愿意——',
+    options:[
+      {id:'risk_taker',title:'🎲 冒险一次，赌一个更好的未来',effects:{career:3,wealth:2,love:0,freedom:2,happiness:0},riskTaker:true},
+      {id:'risk_safe',title:'🛤️ 稳稳地走一条确定的路',effects:{career:1,wealth:1,love:0,freedom:0,happiness:3},riskTaker:false}
+    ]
+  }
+];
+
+const PHASE_WEIGHTS = [
+  {career:1.2,wealth:1.0,love:0.8,freedom:1.0,happiness:1.0},
+  {career:1.1,wealth:1.1,love:0.9,freedom:1.0,happiness:1.0},
+  {career:1.0,wealth:1.1,love:1.2,freedom:1.0,happiness:1.0},
+  {career:0.9,wealth:1.2,love:1.1,freedom:1.1,happiness:1.1},
+  {career:0.8,wealth:1.0,love:1.0,freedom:1.2,happiness:1.3}
+];
+
+const STUDENT_TIMELINE = {
+  ages:[18,22,25,28,32],
+  phases:[
+    {age:18,label:'18岁 · 高考后的方向',questions:[
+      {id:'s1_1',age:18,phase:0,isKey:true,title:'你的志愿',scenario:'高考出分了，你盯着屏幕上的数字，脑子里同时闪过好几种可能。',transition:'你的人生地图，从填下这个志愿的那一刻开始展开。',options:[
+        {id:'s1_985',title:'去一线城市读 985',desc:'离家一千多公里，但平台够大',effects:{career:7,wealth:0,love:0,freedom:-2,happiness:0}},
+        {id:'s1_local',title:'留在省内读一本',desc:'周末还能回家吃饭',effects:{career:2,wealth:0,love:2,freedom:1,happiness:3}},
+        {id:'s1_abroad',title:'出国留学',desc:'趁年轻去看看完全不同的世界',effects:{career:5,wealth:-2,love:0,freedom:5,happiness:0}}
+      ]},
+      {id:'s1_2',age:18,phase:0,isKey:true,title:'社团选择',scenario:'大一开学第一周，社团招新的横幅挂满了整条路。学长学姐们举着牌子吆喝，你的室友已经报了三个。',transition:'大学里选怎么花时间，其实就是在选成为什么样的人。',options:[
+        {id:'s1_student_union',title:'加入学生会',desc:'多认识人、多积累资源',effects:{career:5,wealth:0,love:1,freedom:-2,happiness:0}},
+        {id:'s1_hobby_club',title:'加入兴趣社团',desc:'摄影、乐队、话剧——做自己真正喜欢的事',effects:{career:0,wealth:0,love:2,freedom:0,happiness:5}},
+        {id:'s1_no_club',title:'都不加',desc:'把时间留给自己——图书馆、操场、或者发呆都好',effects:{career:1,wealth:0,love:0,freedom:5,happiness:0}}
+      ]},
+      {id:'s1_3',age:18,phase:0,isKey:false,title:'大二暑假',scenario:'两个月完全属于你。群里有人在约实习，有人在约旅行，你妈发来语音问你什么时候回家。',transition:'后来你发现，每个暑假做的事，都在悄悄改变你毕业时的方向。',options:[
+        {id:'s1_intern',title:'去大厂实习',desc:'提前体验一下"社会的毒打"',effects:{career:6,wealth:1,love:0,freedom:-2,happiness:0}},
+        {id:'s1_travel',title:'和朋友远途旅行',desc:'青春就该浪一浪',effects:{career:0,wealth:-1,love:1,freedom:3,happiness:5}},
+        {id:'s1_go_home',title:'回家待着',desc:'陪陪爸妈，吃两个月家里饭',effects:{career:0,wealth:0,love:4,freedom:0,happiness:3}},
+        {id:'s1_self_study',title:'留校自学做项目',desc:'趁暑假弯道超车',effects:{career:5,wealth:0,love:0,freedom:0,happiness:0}}
+      ]}
+    ]},
+    {age:22,label:'22岁 · 毕业',questions:[
+      {id:'s2_1',age:22,phase:1,isKey:true,title:'毕业出路',scenario:'毕业答辩刚结束，你手里攥着几种完全不同的可能性。宿舍群已经有人开始倒计时离校了。',transition:'第一份工作不决定一切。但它决定了你看世界的第一个角度。',options:[
+        {id:'s2_bigco',title:'大厂 Offer',desc:'一线城市，月薪不错，但听说要 996',effects:{career:8,wealth:2,love:0,freedom:-5,happiness:0}},
+        {id:'s2_gov',title:'考公/考编上岸',desc:'稳定但天花板清晰',effects:{career:2,wealth:0,love:0,freedom:1,happiness:5}},
+        {id:'s2_startup',title:'创业公司 Offer',desc:'小团队，"你来了就是核心"',effects:{career:5,wealth:1,love:0,freedom:3,happiness:0},riskBonus:{career:2}},
+        {id:'s2_gap',title:'先 Gap 一段时间',desc:'想清楚自己要什么',effects:{career:0,wealth:-2,love:0,freedom:6,happiness:1},riskBonus:{freedom:2}}
+      ]},
+      {id:'s2_2',age:22,phase:1,isKey:false,title:'下班之后',scenario:'入职三个月，你逐渐发现：原来下班之后的时间才是最能定义一个人的东西。',transition:'你开始意识到，精力才是这个年纪最贵的货币。',options:[
+        {id:'s2_hustle',title:'加班或学习',desc:'想尽快站稳脚跟',effects:{career:5,wealth:2,love:0,freedom:-2,happiness:-2}},
+        {id:'s2_social',title:'约朋友、探店',desc:'维持自己的社交圈',effects:{career:0,wealth:0,love:2,freedom:0,happiness:5}},
+        {id:'s2_recharge',title:'回家宅着',desc:'打游戏、看剧、刷手机，拒绝内耗',effects:{career:0,wealth:0,love:0,freedom:3,happiness:2}}
+      ]}
+    ]},
+    {age:25,label:'25岁 · 职业与感情',questions:[
+      {id:'s3_1',age:25,phase:2,isKey:false,title:'管理岗机会',scenario:'25岁，工作三年。你的领导找你谈话："有个管理岗的机会，你考虑一下？"周围的同事投来复杂的目光。',transition:'从这一年起，你开始真正理解什么叫"选择的代价"。',options:[
+        {id:'s3_lead',title:'接了',desc:'压力大就大吧，这种机会不是一直有的',effects:{career:7,wealth:2,love:0,freedom:-5,happiness:0}},
+        {id:'s3_expert',title:'走专家路线',desc:'不想管人，想把专业能力做深',effects:{career:4,wealth:0,love:0,freedom:2,happiness:1}},
+        {id:'s3_leave',title:'考虑换工作了',desc:'坦白说，这里天花板快到了',effects:{career:2,wealth:0,love:0,freedom:4,happiness:1}}
+      ]},
+      {id:'s3_2',age:25,phase:2,isKey:true,title:'感情抉择',scenario:'你遇到了一个人，聊天到凌晨也不觉得累。但你们的生活轨迹差了十万八千里——不同的城市，不同的作息，不同的未来规划。',transition:'有些人出现在你生命里，不是为了陪你走完全程，而是为了改变你的方向。',options:[
+        {id:'s3_love_chase',title:'主动靠过去',desc:'调整自己的计划',effects:{career:-3,wealth:0,love:8,freedom:0,happiness:1}},
+        {id:'s3_love_wait',title:'顺其自然',desc:'如果是对的人，时间会给答案',effects:{career:0,wealth:0,love:3,freedom:1,happiness:0}},
+        {id:'s3_love_self',title:'先把自己搞好',desc:'现阶段不想为感情妥协',effects:{career:4,wealth:1,love:-2,freedom:0,happiness:0}},
+        {id:'s3_love_confess',title:'直接表白',desc:'不管结果——至少不后悔',effects:{career:0,wealth:0,love:6,freedom:0,happiness:2},riskBonus:{love:2}}
+      ]},
+      {id:'s3_3',age:25,phase:2,isKey:false,title:'副业邀约',scenario:'大学室友拉了个群："我有个副业的点子，咱们要不要一起搞？"群里已经有三个人说"我加"了。',transition:'能跟朋友一起赚钱最好。但大多数副业故事的结局是：钱没赚到，朋友也远了。',options:[
+        {id:'s3_side_yes',title:'进群，搞起来',desc:'周末和晚上搞起来',effects:{career:3,wealth:5,love:0,freedom:-3,happiness:0},riskBonus:{wealth:2}},
+        {id:'s3_side_watch',title:'先观望',desc:'看看再说，不投入',effects:{career:0,wealth:1,love:0,freedom:0,happiness:0}},
+        {id:'s3_side_no',title:'不了',desc:'我的周末是我最后的底线',effects:{career:0,wealth:0,love:0,freedom:4,happiness:2}}
+      ]}
+    ]},
+    {age:28,label:'28岁 · 城市与生活',questions:[
+      {id:'s4_1',age:28,phase:3,isKey:true,title:'城市去留',scenario:'28岁。房东涨租那天，你站在窗前想了很久：我是不是该认真想想，到底要在哪座城市过一辈子。',transition:'城市是容器。你选的城市，最终会塑造你的生活形状。',options:[
+        {id:'s4_stay',title:'留下来',desc:'这里有我的积累、圈子和可能性',effects:{career:4,wealth:1,love:0,freedom:-3,happiness:0}},
+        {id:'s4_move',title:'去一座更舒服的城市',desc:'生活成本更低、节奏更慢',effects:{career:0,wealth:0,love:1,freedom:4,happiness:4}},
+        {id:'s4_home',title:'回老家',desc:'离爸妈近一点，房子的事也能解决',effects:{career:-1,wealth:2,love:4,freedom:0,happiness:3}},
+        {id:'s4_nomad',title:'数字游民',desc:'远程工作，不被一座城市绑定',effects:{career:0,wealth:0,love:0,freedom:7,happiness:1},riskBonus:{freedom:2}}
+      ]},
+      {id:'s4_2',age:28,phase:3,isKey:false,title:'同龄人压力',scenario:'朋友圈里开始有人晒婚纱照、买房合同、宝宝的B超图。你点了个赞，放下手机想了一会儿。',transition:'别人的朋友圈是精心挑选的 highlight reel。你的人生不需要按别人的剧本走。',options:[
+        {id:'s4_settle',title:'有点焦虑',desc:'我是不是也该稳定了',effects:{career:0,wealth:-1,love:5,freedom:-2,happiness:0}},
+        {id:'s4_own_pace',title:'我有我的节奏',desc:'替他们开心，但不急',effects:{career:1,wealth:0,love:0,freedom:2,happiness:3}},
+        {id:'s4_unbothered',title:'完全不在意',desc:'过好自己的就行',effects:{career:0,wealth:0,love:0,freedom:2,happiness:4}}
+      ]}
+    ]},
+    {age:32,label:'32岁 · 回顾',questions:[
+      {id:'s5_1',age:32,phase:4,isKey:false,title:'现在最在意的',scenario:'一个朋友问你："你现在最在意什么？"你想了想，脱口而出的是——',transition:'你没有做错什么。你只是做了属于你的选择。',options:[
+        {id:'s5_career',title:'"事业还没到我想要的位置"',effects:{career:4,wealth:1,love:0,freedom:-1,happiness:0}},
+        {id:'s5_people',title:'"身边的人比什么都重要"',effects:{career:0,wealth:0,love:4,freedom:0,happiness:2}},
+        {id:'s5_free',title:'"我只想过自己说了算的日子"',effects:{career:0,wealth:0,love:0,freedom:4,happiness:2}}
+      ]},
+      {id:'s5_2',age:32,phase:4,isKey:true,title:'如果重来',scenario:'如果宇宙给你一次重新选择的机会——只能改一件事——你会改什么？',transition:'人生实验即将结束。但属于你的故事，才刚刚开始。',options:[
+        {id:'s5_redo_wealth',title:'更早开始攒钱',desc:'别在不值得的东西上浪费那么多',effects:{career:0,wealth:5,love:0,freedom:0,happiness:0}},
+        {id:'s5_redo_love',title:'对重要的人再勇敢一点',desc:'别错过那些人',effects:{career:0,wealth:0,love:5,freedom:0,happiness:1}},
+        {id:'s5_redo_freedom',title:'更早学会说"不"',desc:'别让别人的期待绑架自己',effects:{career:0,wealth:0,love:0,freedom:5,happiness:1}},
+        {id:'s5_redo_none',title:'不改',desc:'走到这里挺好的',effects:{career:0,wealth:0,love:0,freedom:0,happiness:5}}
+      ]}
+    ]}
+  ]
+};
+
+const CAREER_TIMELINE = {
+  ages:[22,25,28,32,35],
+  phases:[
+    {age:22,label:'22岁 · 毕业抉择',questions:[
+      {id:'c1_1',age:22,phase:0,isKey:true,title:'毕业出路',scenario:'毕业季，宿舍里的人一个个搬走了。你刷了三个月的招聘软件，投了无数简历，面了十几家，最后手里就这么几个方向能走。',transition:'人生的第一个十字路口。你选的不只是工作，是未来好几年的生活方式。',options:[
+        {id:'c1_bigco',title:'大厂 Offer',desc:'一线城市，package 不错，"做好掉头发的准备"',effects:{career:8,wealth:2,love:0,freedom:-5,happiness:0}},
+        {id:'c1_startup',title:'小公司 Offer',desc:'新一线城市，二十人团队，"来了你就是元老"',effects:{career:5,wealth:1,love:0,freedom:3,happiness:0},riskBonus:{career:2}},
+        {id:'c1_gov',title:'考公/考编',desc:'花半年准备，上岸了就是一辈子的稳定',effects:{career:2,wealth:0,love:0,freedom:1,happiness:5}},
+        {id:'c1_study',title:'读研',desc:'多两年缓冲，也多两年探索的时间',effects:{career:4,wealth:-2,love:0,freedom:2,happiness:0}}
+      ]},
+      {id:'c1_2',age:22,phase:0,isKey:false,title:'租房',scenario:'到了新城市，找房子才是第一个社会考验。中介带你看了一圈，预算有限，每个选项都不完美。',transition:'你第一次体会到：钱、时间、舒适——三样最多选两样。',options:[
+        {id:'c1_rent_close',title:'公司旁的单间',desc:'贵但通勤10分钟，下雨天也不慌',effects:{career:0,wealth:-4,love:0,freedom:3,happiness:1}},
+        {id:'c1_rent_far',title:'地铁末站的一居室',desc:'便宜但每天通勤一个半小时',effects:{career:0,wealth:3,love:0,freedom:-3,happiness:0}},
+        {id:'c1_rent_share',title:'和同事合租',desc:'分摊成本，但下班也要社交',effects:{career:0,wealth:2,love:2,freedom:0,happiness:0}}
+      ]},
+      {id:'c1_3',age:22,phase:0,isKey:false,title:'周五晚上',scenario:'入职半年，你发现同一批进来的人已经分化了：有人每天加班到九点，有人六点准时走。周五晚上，你看了看工位上的待办事项。',transition:'你开始建立属于自己的生活节奏。不管你选了哪种，都没有标准答案。',options:[
+        {id:'c1_overtime',title:'留下加班',desc:'这个季度的考核很重要',effects:{career:5,wealth:2,love:0,freedom:-2,happiness:-2}},
+        {id:'c1_friends',title:'走了',desc:'约了朋友吃火锅，工作明天再说',effects:{career:0,wealth:0,love:2,freedom:0,happiness:5}},
+        {id:'c1_learn',title:'回家充电',desc:'打开电脑学点新东西，为自己充电',effects:{career:3,wealth:0,love:0,freedom:0,happiness:1}}
+      ]}
+    ]},
+    {age:25,label:'25岁 · 职业与机会',questions:[
+      {id:'c2_1',age:25,phase:1,isKey:false,title:'晋升机会',scenario:'25岁，工作三年。你的领导私下跟你说："下个季度有个主管岗，我想推荐你。但你得做好心理准备——管人比做事难多了。"',transition:'每一次说"好"或"不好"，都在画出你职业地图的下一段路。',options:[
+        {id:'c2_promo_yes',title:'接了',desc:'既然机会来了，先上去再说',effects:{career:8,wealth:2,love:0,freedom:-5,happiness:0}},
+        {id:'c2_promo_expert',title:'走专家路线',desc:'不想每天开会管人',effects:{career:4,wealth:0,love:0,freedom:3,happiness:1}},
+        {id:'c2_promo_leave',title:'在考虑跳槽了',desc:'说实话，这里天花板太低',effects:{career:5,wealth:1,love:0,freedom:1,happiness:0}}
+      ]},
+      {id:'c2_2',age:25,phase:1,isKey:true,title:'朋友创业邀约',scenario:'你大学最好的朋友发来一条长消息："我辞职了，准备做一个项目。你要不要一起？认真的。"你看了他的商业计划，靠谱程度五五开。',transition:'25岁做的赌注，30岁才知道开奖结果。',options:[
+        {id:'c2_side_allin',title:'辞职加入',desc:'人生能有几次跟兄弟/闺蜜一起创业的机会',effects:{career:6,wealth:7,love:0,freedom:0,happiness:-2},riskBonus:{career:3,wealth:2}},
+        {id:'c2_side_part',title:'不辞职，但下班参与',desc:'下班和周末参与',effects:{career:4,wealth:4,love:0,freedom:-3,happiness:0}},
+        {id:'c2_side_invest',title:'投一小笔钱',desc:'精神支持，但不参与执行',effects:{career:1,wealth:2,love:0,freedom:0,happiness:0}},
+        {id:'c2_side_no',title:'不了',desc:'我不想拿友谊冒险',effects:{career:0,wealth:0,love:3,freedom:3,happiness:1}}
+      ]}
+    ]},
+    {age:28,label:'28岁 · 城市、感情与生活',questions:[
+      {id:'c3_1',age:28,phase:2,isKey:true,title:'城市抉择',scenario:'28岁。上周你算了一笔账：在这座城市的收入不错，但扣掉房租和生活费后，存款增长得远比想象中慢。你开始想一个问题：要不要换个地方？',transition:'你选择的城市，决定了你未来五年推开门看到的风景。',options:[
+        {id:'c3_tier1',title:'留在一线',desc:'机会多、圈子大，熬过去就好了',effects:{career:5,wealth:2,love:0,freedom:-3,happiness:0}},
+        {id:'c3_new1',title:'去新一线',desc:'同样的岗位，生活质量翻一倍',effects:{career:2,wealth:1,love:0,freedom:3,happiness:4}},
+        {id:'c3_home',title:'回老家',desc:'买得起房、看得到爸妈、过得了日子',effects:{career:0,wealth:2,love:4,freedom:0,happiness:4}},
+        {id:'c3_remote',title:'远程办公',desc:'谁说一定要待在一个地方？',effects:{career:0,wealth:0,love:0,freedom:7,happiness:1},riskBonus:{freedom:2}}
+      ]},
+      {id:'c3_2',age:28,phase:2,isKey:true,title:'感情选择',scenario:'最近你身边出现了一个人——聊天总是停不下来，见面的时候时间过得特别快。唯一的问题是，你们的生活完全不在同一条轨道上。',transition:'爱情这件事，最难的不是遇到对的人，而是在对的时候做对的决定。',options:[
+        {id:'c3_love_move',title:'调整计划去靠近对方',desc:'为了这个人值得',effects:{career:-3,wealth:0,love:8,freedom:0,happiness:2}},
+        {id:'c3_love_confess',title:'先告白',desc:'剩下的事走一步看一步',effects:{career:0,wealth:0,love:6,freedom:0,happiness:2},riskBonus:{love:2}},
+        {id:'c3_love_wait',title:'顺其自然',desc:'如果是对的人，缘分不会走丢',effects:{career:1,wealth:0,love:3,freedom:1,happiness:0}},
+        {id:'c3_love_pass',title:'算了',desc:'现在不是谈感情的时候',effects:{career:4,wealth:1,love:-3,freedom:0,happiness:0}}
+      ]},
+      {id:'c3_3',age:28,phase:2,isKey:false,title:'生活方式',scenario:'一个深夜，你把最近三年的银行流水拉出来看了看。收入在涨，但总觉得"没攒到钱"。你决定认真想一想以后要怎么过日子。',transition:'你开始真正理解一句话：你花钱的方式，就是你价值观的投票。',options:[
+        {id:'c3_hustle',title:'拼命赚钱',desc:'35岁之前实现某种程度的自由',effects:{career:5,wealth:8,love:0,freedom:-2,happiness:-3}},
+        {id:'c3_balance',title:'找到平衡',desc:'不需要大富大贵，赚钱和生活平衡就好',effects:{career:0,wealth:2,love:0,freedom:1,happiness:5}},
+        {id:'c3_simple',title:'降低欲望',desc:'学会少花钱比提高收入更有效',effects:{career:0,wealth:3,love:0,freedom:2,happiness:3}}
+      ]}
+    ]},
+    {age:32,label:'32岁 · 安家与转折',questions:[
+      {id:'c4_1',age:32,phase:3,isKey:true,title:'买房决策',scenario:'32岁。周末逛了一圈售楼处回来，你坐在出租屋里算了半天。掏空六个钱包能凑够首付，但接下来就是30年的贷款。',transition:'房子不只是房子。它是你对"接下来十年怎么过"投的票。',options:[
+        {id:'c4_buy',title:'买',desc:'有了自己的房子，心才能安定',effects:{career:0,wealth:-5,love:1,freedom:-4,happiness:3}},
+        {id:'c4_rent',title:'不买',desc:'把钱留着，机会比砖头值钱',effects:{career:0,wealth:3,love:0,freedom:4,happiness:0}},
+        {id:'c4_hometown',title:'回老家/小城市买',desc:'压力小十倍',effects:{career:-1,wealth:1,love:2,freedom:0,happiness:4}}
+      ]},
+      {id:'c4_2',age:32,phase:3,isKey:false,title:'职业瓶颈',scenario:'连续三个月做一样的事。你开始频繁地打开招聘软件，又关掉。一种说不清的疲惫感包围着你。',transition:'瓶颈期不是终点。它是人生在问你：你接下来想往哪走？',options:[
+        {id:'c4_jump',title:'跳槽',desc:'就算结果不确定，至少换个环境透透气',effects:{career:6,wealth:4,love:0,freedom:0,happiness:0},riskBonus:{career:2}},
+        {id:'c4_life',title:'不折腾了',desc:'把精力分给工作以外的事',effects:{career:0,wealth:0,love:2,freedom:2,happiness:4}},
+        {id:'c4_pause',title:'给自己半年时间',desc:'认真想一想到底要什么',effects:{career:1,wealth:0,love:0,freedom:3,happiness:2}}
+      ]}
+    ]},
+    {age:35,label:'35岁 · 人生回顾',questions:[
+      {id:'c5_1',age:35,phase:4,isKey:true,title:'如果重来',scenario:'如果宇宙给你一次机会，回到22岁毕业那天。只能改一件事。你会改什么？',transition:'人生实验即将结束。但真正的人生，才刚刚开始。',options:[
+        {id:'c5_redo_wealth',title:'更早开始攒钱',desc:'少在不值得的东西上花那么多',effects:{career:0,wealth:5,love:0,freedom:0,happiness:0}},
+        {id:'c5_redo_love',title:'对那个人再勇敢一点',desc:'别让犹豫变成遗憾',effects:{career:0,wealth:0,love:5,freedom:0,happiness:1}},
+        {id:'c5_redo_freedom',title:'更早学会说"不"',desc:'不是所有人的期待都需要你去满足',effects:{career:0,wealth:0,love:0,freedom:5,happiness:1}},
+        {id:'c5_redo_none',title:'不改',desc:'每一步都是我自己走的，走到这里挺好',effects:{career:0,wealth:0,love:0,freedom:0,happiness:5}}
+      ]}
+    ]}
+  ]
+};
+
+const RESULT_TYPES = [
+  {id:'hustler',name:'卷王人生',emoji:'🔥',rarity:'8.2%',color:'#FF4500',oneliner:'你用尽全力奔跑，终于跑到了很多人到不了的地方。',
+   condition:s=>s.career>=75&&s.wealth>=65&&s.freedom<55,
+   profile:{city:'一线城市',job:'大厂高级管理者',income:'50\~80W',love:'有伴侣但陪伴不多',savings:'80\~150W'},
+   story:'你是一个愿意为成长牺牲一部分自由的人。\n\n22岁，你选择了大城市和更高的职业起点。25岁，你抓住了每一个晋升机会。28岁，你放弃了一次慢下来的机会。\n\n你的收入超过了同龄人的大多数，但日历上很少有属于自己的空白时间。\n\n你拥有了不错的事业，也终于开始重新思考：**"如果当初选择另一条路，我现在会不会更快乐？"**',
+   parallelHint:'你失去的自由和陪伴，也许是另一种人生里最珍贵的东西。'},
+  {id:'idealist',name:'自由理想主义者',emoji:'🌊',rarity:'5.7%',color:'#00BCD4',oneliner:'你选择了一条少有人走的路，风景果然不一样。',
+   condition:s=>s.freedom>=70&&s.happiness>=60&&s.career<65,
+   profile:{city:'新一线或小城',job:'自由职业 / 远程工作',income:'15\~25W',love:'长期稳定伴侣',savings:'20\~40W'},
+   story:'你始终相信，人生不该只有一条轨道。\n\n你放弃过更高的薪水，拒绝过晋升，也离开过大城市。你的朋友有时不理解你为什么不走那条"更稳的路"。\n\n但你知道：每天醒来不讨厌今天，就是你对自己最好的交代。\n\n你没有最多的存款，但拥有大把可以自由支配的时间。偶尔也会想：**"如果当初拼一把，现在会不会不一样？"**',
+   parallelHint:'你得到的自由，是另一条路上最稀缺的资源。'},
+  {id:'romantic',name:'浪漫冒险家',emoji:'💫',rarity:'11.3%',color:'#FF69B4',oneliner:'你为最重要的人做了最重要的选择。',
+   condition:s=>s.love>=70&&s.happiness>=60,
+   profile:{city:'伴侣所在城市',job:'稳定职业',income:'20\~35W',love:'深度亲密关系',savings:'25\~50W'},
+   story:'你是那种"为了对的人可以改变计划"的人。\n\n28岁那年的那个决定，改变了你人生的方向——不是为了更高的薪水或更好的机会，而是为了一个人。\n\n你的事业不是最耀眼的，存款也不是最厚的。但每天回到家的时候，你知道有人在等你。\n\n你偶尔想：**"如果当初选了事业，现在的我会是什么样？"**',
+   parallelHint:'你拥有的情感连接，是很多事业成功者最羡慕的东西。'},
+  {id:'ambitious',name:'野心现实主义者',emoji:'👑',rarity:'4.1%',color:'#FFD700',oneliner:'你既有野心又有执行力，走到哪都不会太差。',
+   condition:s=>s.career>=70&&s.wealth>=70,
+   profile:{city:'一线城市',job:'创业者 / 高管',income:'60\~100W',love:'有但投入不多',savings:'100\~200W'},
+   story:'你是一个目标非常清晰的人。每一次选择，你都在计算"哪个选项的回报更高"。\n\n你从不后悔。因为每一步都是你自己想清楚后走的。\n\n但有时候深夜会突然想：这些年到底是在为自己活，还是在为某个目标活？\n\n你拥有了大多数人羡慕的履历和收入。**但你心里知道，你还没找到那个让你"不工作也很快乐"的答案。**',
+   parallelHint:'你赢得的成就，是否值得你付出的代价？另一种人生会告诉你答案。'},
+  {id:'stable',name:'稳定幸福派',emoji:'☀️',rarity:'14.6%',color:'#4CAF50',oneliner:'你没有最高的分数，但每一项都在及格线以上——这本身就很了不起。',
+   condition:s=>s.happiness>=65&&s.love>=60&&s.career>=45&&s.wealth>=45&&s.freedom>=45,
+   profile:{city:'新一线 / 老家',job:'稳定职业',income:'25\~40W',love:'稳定幸福',savings:'40\~80W'},
+   story:'你不是没有过野心，只是你更早想明白了一件事：**人生不是竞赛，活得舒服才是本事。**\n\n你的每一次选择，都在往"让自己安心"的方向走。你有稳定的工作、不错的收入、值得信任的伴侣。\n\n朋友圈里你看起来平平无奇，但你很少在凌晨三点因为焦虑而睡不着。\n\n你偶尔想：**"如果当初再大胆一点呢？"** 但想完就睡着了。',
+   parallelHint:'你的平衡，是很多人花了很多年都没学会的能力。'},
+  {id:'fighter',name:'城市奋斗者',emoji:'🏙️',rarity:'12.8%',color:'#1E90FF',oneliner:'你正在为未来储蓄，代价是现在。',
+   condition:s=>s.career>=65&&s.freedom<50&&s.happiness<60,
+   profile:{city:'一线城市',job:'中层管理 / 资深专家',income:'30\~50W',love:'不确定',savings:'50\~90W'},
+   story:'你在大城市扎下了根，但这根扎得并不轻松。\n\n每一天都是在"做完这个项目就好了""熬过这一年就好了"中度过。你不确定终点在哪，但你知道不能停。\n\n你想过离开，但最后还是留下了——因为你已经付出了太多，走不了了。\n\n你的简历很漂亮，银行卡也还行。**但你记不清上一次"什么都不做"是什么时候了。**',
+   parallelHint:'你在坚持的东西，另一个你已经放弃了——但她也过得不错。'},
+  {id:'hedonist',name:'及时行乐派',emoji:'🎉',rarity:'6.4%',color:'#9C27B0',oneliner:'你活成了很多人想活但不敢活的样子。',
+   condition:s=>s.happiness>=70&&s.freedom>=65&&s.wealth<55,
+   profile:{city:'换过好几个',job:'不固定 / 兴趣驱动',income:'12\~20W',love:'丰富但不固定',savings:'10\~25W'},
+   story:'你一直在追一种"此刻"的感觉。\n\n不喜欢的工作你会辞掉，不开心的城市你会离开。你的朋友遍布全国，你的收入不算高但花得痛快。\n\n你知道这样不"稳妥"，但你更害怕的是：**60岁回头看，发现自己从来没按自己的意思活过一天。**\n\n你不确定明年在哪，但你确定今天很快乐。',
+   parallelHint:'你赢了自由，但你的银行卡也在提醒你——不确定性本身也是有代价的。'},
+  {id:'minimalist',name:'低欲望生活家',emoji:'🍃',rarity:'7.5%',color:'#8BC34A',oneliner:'你很早就想通了很多人一辈子想不通的事。',
+   condition:s=>s.freedom>=65&&s.happiness>=60&&s.career<55&&s.wealth<55,
+   profile:{city:'小城 / 老家',job:'远程 / 轻量工作',income:'10\~18W',love:'淡然但满足',savings:'15\~30W'},
+   story:'你不是没有能力，只是不想那么累。\n\n你看着身边的人卷来卷去，有时候也会怀疑自己是不是太佛了。但你很快就会想到：每天下班后有两小时做饭、三小时看书、周末可以发呆，这些东西在很多人眼里是奢侈品。\n\n你的存款不多但够花，你不焦虑也不兴奋。**你只是在安静地过着自己的日子。**',
+   parallelHint:'你放弃的那些可能性，有时候半夜也会来找你——但天亮了就走了。'},
+  {id:'hexagon',name:'全能六边形战士',emoji:'⭐',rarity:'3.2%',color:'#00E5FF',oneliner:'你是那个让人觉得"她怎么什么都有"的人。',
+   condition:s=>s.career>=58&&s.wealth>=58&&s.love>=58&&s.freedom>=55&&s.happiness>=55,
+   profile:{city:'新一线',job:'行业中坚力量',income:'35\~55W',love:'稳定幸福',savings:'60\~100W'},
+   story:'你没有把所有筹码押在一个方向。\n\n事业上你做到了不错的位置，但没有为此牺牲全部的生活；感情上你遇到了对的人，也给了对方足够的空间；钱赚得不算最多，但花得明白。\n\n你的人生不是最刺激的那种。但每当朋友向你诉苦"事业和生活怎么选"的时候，你总是不知道该怎么安慰——**因为你好像没怎么面对过这个问题。**',
+   parallelHint:'平衡本身就是一种天赋。但如果你把所有能量集中到一个方向，会发生什么？'},
+  {id:'explorer',name:'跨界探索者',emoji:'🧭',rarity:'4.8%',color:'#FF6F00',oneliner:'你的人生简历，比大多数人的朋友圈都精彩。',
+   condition:s=>{const max=Math.max(s.career,s.wealth,s.love,s.freedom,s.happiness),min=Math.min(s.career,s.wealth,s.love,s.freedom,s.happiness);return max-min>=30&&s.freedom>=55;},
+   profile:{city:'没固定过',job:'做过好几种完全不同的事',income:'15\~40W',love:'精彩但动荡',savings:'20\~50W'},
+   story:'你的简历不是一条直线，而是一张地图。\n\n你做过完全不相关的行业，住过完全不同的城市，交过完全不同圈子的朋友。每次别人问你"你到底想做什么"，你都需要想一会儿。\n\n你不是什么都不专，你是什么都想试试。人生这么短，只走一条路太亏了。\n\n你最怕的不是失败，是无聊。**你用丰富来对抗平庸，哪怕代价是永远没有"稳定"这两个字。**',
+   parallelHint:'如果把你所有的能量集中到一个方向，你可能早就成了那个领域的专家——但你会愿意吗？'},
+  {id:'caretaker',name:'温暖守护者',emoji:'🤲',rarity:'9.1%',color:'#E91E63',oneliner:'你总是先想到别人，然后才想到自己。',
+   condition:s=>s.love>=65&&s.happiness>=55&&s.career<65&&s.freedom<60,
+   profile:{city:'离家人近的城市',job:'稳定且不太忙的工作',income:'18\~30W',love:'被需要的感觉',savings:'30\~60W'},
+   story:'你做选择的时候，脑子里第一个蹦出来的问题不是"我想要什么"，而是"他们会怎么样"。\n\n你为了陪家人放弃过外地的机会，为了伴侣调整过自己的节奏，为了朋友推掉过重要的事。\n\n有人说你太容易妥协。但你知道——你不是在妥协，你是在选择你认为更重要的东西。\n\n你的朋友圈不大，但每一个人都信任你。**你用陪伴丈量人生的重量，而不是用头衔。**',
+   parallelHint:'你为别人让出的那些机会，有一天你会不会想要回来？'},
+  {id:'latebloomer',name:'大器晚成型',emoji:'🌅',rarity:'6.9%',color:'#FF9800',oneliner:'你前半程走得慢，但方向越来越清楚。',
+   condition:s=>{const sum=s.career+s.wealth+s.love+s.freedom+s.happiness;return sum>=280&&sum<=340&&s.happiness>=55;},
+   profile:{city:'适合自己的城市',job:'终于找到方向的职业',income:'20\~35W',love:'慢慢靠近的人',savings:'25\~50W'},
+   story:'你的前半段人生好像一直在试错。\n\n该果断的时候犹豫了，该坚持的时候放弃了，该表白的时候沉默了。你一度觉得自己什么都没做好。\n\n但回头看，那些"浪费"的时间其实都在帮你排除错误答案。你现在终于知道自己要什么了——虽然起步比别人晚了几年。\n\n你不是不优秀，**你只是需要更多时间来认识自己。而你终于找到了。**',
+   parallelHint:'你用来迷茫的那些年，另一个你可能用来冲刺了——但谁更快乐不一定。'},
+  {id:'ordinary',name:'平凡也是答案',emoji:'🌙',rarity:'5.4%',color:'#B0BEC5',oneliner:'没有谁的人生需要活成别人的模板。',
+   condition:()=>true,
+   profile:{city:'普通城市',job:'普通职业',income:'15\~25W',love:'有牵挂的人',savings:'25\~50W'},
+   story:'你的人生没有什么戏剧性的转折。\n\n每一次选择，你都做了当时觉得"还不错"的那个。没有特别冒险，也没有特别保守。\n\n你过着一种不好不坏的生活。但最近你开始意识到：**所谓的"不好不坏"，可能就是很多人苦苦追求的"安稳"。**\n\n平凡也是一种人生答案。而且是大多数人最终会走到的那个答案。',
+   parallelHint:'如果你把其中一次"还不错"换成"冒一次险"呢？'}
+];
+
+// ======== ENGINE ========
+const ATTRS = ['career','wealth','love','freedom','happiness'];
+const ATTR_NAMES = {career:'Career',wealth:'Wealth',love:'Love',freedom:'Freedom',happiness:'Happiness'};
+const ATTR_NAMES_CN = {career:'事业',wealth:'财富',love:'爱情',freedom:'自由',happiness:'幸福'};
+
+let state = {
+  timeline:null,riskTaker:false,userStage:'',
+  attrs:{career:50,wealth:50,love:50,freedom:50,happiness:50},
+  choices:[],allQuestions:[],currentQIdx:0,originStep:0,originAnswers:[]
+};
+
+function clamp(v){return Math.max(0,Math.min(100,Math.round(v)))}
+function applyEffects(effects,phase,riskTaker,riskBonus){
+  const w=PHASE_WEIGHTS[phase]||{career:1,wealth:1,love:1,freedom:1,happiness:1};
+  const result={};
+  ATTRS.forEach(a=>{let v=(effects[a]||0)*(w[a]||1);if(riskTaker&&riskBonus&&riskBonus[a])v+=riskBonus[a];result[a]=v;});
+  return result;
+}
+function calcAttrs(choices,allQuestions,riskTaker){
+  const attrs={career:50,wealth:50,love:50,freedom:50,happiness:50};
+  choices.forEach(c=>{const q=allQuestions.find(qq=>qq.id===c.questionId);if(!q)return;const opt=q.options.find(o=>o.id===c.optionId);if(!opt)return;const eff=applyEffects(opt.effects,q.phase,riskTaker,opt.riskBonus);ATTRS.forEach(a=>{attrs[a]+=eff[a];});});
+  ATTRS.forEach(a=>{attrs[a]=clamp(attrs[a]);});
+  return attrs;
+}
+// ======== SCORING-BASED TYPE MATCHING ========
+const TYPE_MATCHERS=[
+  {id:'hustler',
+    gate:s=>s.career>=70&&s.wealth>=60&&s.freedom<60,
+    fit:s=>{let f=0;f+=Math.min(30,(s.career-70)*2);f+=Math.min(20,(s.wealth-60)*1.5);f+=Math.min(20,(60-s.freedom)*1.5);f+=Math.min(15,Math.max(0,65-s.love));if(s.love>=65)f-=(s.love-65)*2;f+=10;return f;}},
+  {id:'ambitious',
+    gate:s=>s.career>=65&&s.wealth>=65,
+    fit:s=>{let f=0;f+=Math.min(25,(s.wealth-65)*1.5);f+=Math.min(20,(s.career-65)*1.5);f+=Math.min(15,Math.max(0,65-s.love));f+=Math.min(15,Math.max(0,60-s.freedom));if(s.love>=65)f-=(s.love-65)*3;f+=10;return f;}},
+  {id:'romantic',
+    gate:s=>s.love>=65,
+    fit:s=>{let f=0;f+=Math.min(45,(s.love-65)*3.5);f+=Math.min(20,Math.max(0,s.happiness-50)*1);f+=Math.min(10,Math.max(0,s.love-s.career)*0.8);f+=Math.min(10,Math.max(0,s.love-s.wealth)*0.8);if(s.love>=70)f+=10;f+=5;return f;}},
+  {id:'idealist',
+    gate:s=>s.freedom>=65&&s.career<70,
+    fit:s=>{let f=0;f+=Math.min(35,(s.freedom-65)*3);f+=Math.min(20,Math.max(0,s.happiness-50)*1.2);f+=Math.min(15,Math.max(0,65-s.career));f+=Math.min(10,Math.max(0,s.freedom-s.wealth)*0.5);f+=5;return f;}},
+  {id:'hedonist',
+    gate:s=>s.happiness>=65&&s.freedom>=60,
+    fit:s=>{let f=0;f+=Math.min(30,(s.happiness-65)*3);f+=Math.min(25,(s.freedom-60)*2);f+=Math.min(15,Math.max(0,55-s.wealth));f+=Math.min(10,Math.max(0,55-s.career));f+=5;return f;}},
+  {id:'fighter',
+    gate:s=>s.career>=62&&s.freedom<53&&s.happiness<60,
+    fit:s=>{let f=0;f+=Math.min(25,(s.career-62)*2);f+=Math.min(25,(53-s.freedom)*2);f+=Math.min(20,(60-s.happiness)*1.5);f+=Math.min(10,Math.max(0,s.wealth-45)*0.5);f+=5;return f;}},
+  {id:'caretaker',
+    gate:s=>s.love>=60&&s.love>s.career&&s.career<68,
+    fit:s=>{let f=0;f+=Math.min(30,(s.love-60)*2.5);f+=Math.min(20,(s.love-s.career)*1.5);f+=Math.min(15,Math.max(0,60-s.freedom));f+=Math.min(15,Math.max(0,s.happiness-45)*0.8);f+=5;return f;}},
+  {id:'minimalist',
+    gate:s=>s.career<58&&s.wealth<58&&s.freedom>=55,
+    fit:s=>{let f=0;f+=Math.min(20,(58-s.career)*2);f+=Math.min(20,(58-s.wealth)*2);f+=Math.min(20,(s.freedom-55)*1.5);f+=Math.min(15,Math.max(0,s.happiness-45)*1);f+=5;return f;}},
+  {id:'hexagon',
+    gate:s=>{const v=ATTRS.map(a=>s[a]);return Math.min(...v)>=50&&Math.max(...v)-Math.min(...v)<=25;},
+    fit:s=>{const v=ATTRS.map(a=>s[a]);const mn=Math.min(...v),mx=Math.max(...v),avg=v.reduce((a,b)=>a+b)/5;let f=0;f+=Math.min(30,(25-(mx-mn))*2);f+=Math.min(30,(avg-50)*1.5);f+=Math.min(20,(mn-50)*2);f+=5;return f;}},
+  {id:'stable',
+    gate:s=>s.happiness>=55&&s.love>=50&&ATTRS.every(a=>s[a]>=38),
+    fit:s=>{const mn=Math.min(...ATTRS.map(a=>s[a])),mx=Math.max(...ATTRS.map(a=>s[a]));let f=0;f+=Math.min(25,(s.happiness-55)*2);f+=Math.min(20,(s.love-50)*1.5);f+=Math.min(15,(mn-38)*1);f+=Math.min(10,Math.max(0,30-(mx-mn))*0.5);f+=5;return f;}},
+  {id:'latebloomer',
+    gate:s=>{const sum=ATTRS.reduce((t,a)=>t+s[a],0);return sum>=230&&sum<=350&&s.happiness>=50;},
+    fit:s=>{const sum=ATTRS.reduce((t,a)=>t+s[a],0);let f=0;f+=Math.min(25,Math.max(0,25-Math.abs(sum-280)*0.3));f+=Math.min(20,(s.happiness-50)*1.5);const mx=Math.max(...ATTRS.map(a=>s[a]));f+=Math.min(15,Math.max(0,75-mx));f+=5;return f;}},
+  {id:'explorer',
+    gate:s=>{const v=ATTRS.map(a=>s[a]);return Math.max(...v)-Math.min(...v)>=33;},
+    fit:s=>{const v=ATTRS.map(a=>s[a]);const range=Math.max(...v)-Math.min(...v);let f=0;f+=Math.min(30,(range-33)*1.2);f+=Math.min(15,Math.max(0,s.freedom-45)*0.8);f+=5;return f;}},
+  {id:'ordinary',gate:()=>true,fit:()=>0}
+];
+function _scoredMatch(attrs,excludeId){
+  let best=null,bestFit=-1;
+  for(const m of TYPE_MATCHERS){
+    if(excludeId&&m.id===excludeId)continue;
+    if(!m.gate(attrs))continue;
+    const f=m.fit(attrs);
+    if(f>bestFit){bestFit=f;best=m.id;}
+  }
+  const tid=best||'ordinary';
+  return RESULT_TYPES.find(t=>t.id===tid)||RESULT_TYPES[RESULT_TYPES.length-1];
+}
+function matchType(attrs){return _scoredMatch(attrs,null);}
+function matchTypeExcluding(attrs,excludeId){return _scoredMatch(attrs,excludeId);}
+// TYPE_CONTRAST: how different two types feel (higher = more dramatic parallel)
+const TYPE_GROUPS={
+  driven:['hustler','ambitious','fighter'],     // 事业/拼搏型
+  free:['idealist','hedonist','minimalist'],     // 自由/享乐型
+  love:['romantic','caretaker'],                  // 情感型
+  balanced:['stable','hexagon','latebloomer'],   // 均衡/中间型
+  wild:['explorer'],                              // 极端分化型
+  default:['ordinary']
+};
+function _typeGroup(id){for(const[g,ids]of Object.entries(TYPE_GROUPS)){if(ids.includes(id))return g;}return 'default';}
+function _typeContrast(idA,idB){
+  if(idA===idB)return 0;
+  const gA=_typeGroup(idA),gB=_typeGroup(idB);
+  // Same group = low contrast
+  if(gA===gB)return 1;
+  // Cross-group contrast scores
+  const HIGH_CONTRAST=[['driven','free'],['driven','love'],['free','love'],['driven','balanced'],['free','wild'],['love','wild']];
+  const pair=[gA,gB].sort().join(',');
+  for(const[a,b]of HIGH_CONTRAST){if(pair===[a,b].sort().join(','))return 3;}
+  return 2; // moderate contrast
+}
+
+function calcParallel(choices,allQuestions,riskTaker,myTypeId){
+  function _buildAlts(choiceIndices){
+    return choiceIndices.map(idx=>{
+      const c=choices[idx];
+      const q=allQuestions.find(qq=>qq.id===c.questionId);
+      const alts=q.options.filter(o=>o.id!==c.optionId);
+      return{idx,questionId:c.questionId,chosenId:c.optionId,alts,phase:q.phase,age:q.age};
+    });
+  }
+  function _searchBest(slotAlts,maxSwaps){
+    let bestCombo=null,bestScore=-1,bestAltAttrs=null,bestAltType=null;
+    const K=slotAlts.length;
+    // Generate combos: 1..maxSwaps swaps
+    const combos=[];
+    for(let i=0;i<K;i++){for(const a of slotAlts[i].alts){combos.push([{sIdx:i,altId:a.id,altTitle:a.title}]);}}
+    if(maxSwaps>=2){for(let i=0;i<K;i++){for(let j=i+1;j<K;j++){for(const ai of slotAlts[i].alts){for(const aj of slotAlts[j].alts){combos.push([{sIdx:i,altId:ai.id,altTitle:ai.title},{sIdx:j,altId:aj.id,altTitle:aj.title}]);}}}}}
+    if(maxSwaps>=3&&K<=6){for(let i=0;i<K;i++){for(let j=i+1;j<K;j++){for(let k=j+1;k<K;k++){for(const ai of slotAlts[i].alts){for(const aj of slotAlts[j].alts){for(const ak of slotAlts[k].alts){combos.push([{sIdx:i,altId:ai.id,altTitle:ai.title},{sIdx:j,altId:aj.id,altTitle:aj.title},{sIdx:k,altId:ak.id,altTitle:ak.title}]);}}}}}}}
+    for(const combo of combos){
+      const swapMap={};
+      combo.forEach(s=>{const sa=slotAlts[s.sIdx];swapMap[sa.questionId]=s.altId;});
+      const altChoices=choices.map(c=>{if(swapMap[c.questionId])return{questionId:c.questionId,optionId:swapMap[c.questionId],phase:c.phase};return c;});
+      const altAttrs=calcAttrs(altChoices,allQuestions,riskTaker);
+      const altType=_scoredMatch(altAttrs,myTypeId);
+      const contrast=_typeContrast(myTypeId,altType.id);
+      let attrDist=0;ATTRS.forEach(a=>{attrDist+=Math.abs(altAttrs[a]-(state.attrs[a]||50));});
+      const score=contrast*120+attrDist*0.5-combo.length*3;
+      if(score>bestScore){bestScore=score;bestCombo=combo;bestAltAttrs=altAttrs;bestAltType=altType;}
+    }
+    return{bestCombo,bestScore,bestAltAttrs,bestAltType,slotAlts};
+  }
+  // Phase 1: search key choices only
+  const keyIndices=[];choices.forEach((c,i)=>{const q=allQuestions.find(qq=>qq.id===c.questionId);if(q&&q.isKey)keyIndices.push(i);});
+  const r1=_searchBest(_buildAlts(keyIndices),3);
+  // Check if contrast is high enough (>=2 = cross-group)
+  const r1Contrast=r1.bestAltType?_typeContrast(myTypeId,r1.bestAltType.id):0;
+  let final=r1;
+  // Phase 2: if contrast too low, include ALL choices
+  if(r1Contrast<2){
+    const allIndices=choices.map((_,i)=>i);
+    const r2=_searchBest(_buildAlts(allIndices),3);
+    const r2Contrast=r2.bestAltType?_typeContrast(myTypeId,r2.bestAltType.id):0;
+    if(r2.bestScore>r1.bestScore)final=r2;
+  }
+  // Build swapped display info
+  const swapped=(final.bestCombo||[]).map(s=>{
+    const sa=final.slotAlts[s.sIdx];
+    const q=allQuestions.find(qq=>qq.id===sa.questionId);
+    const chosen=q.options.find(o=>o.id===sa.chosenId);
+    const alt=q.options.find(o=>o.id===s.altId);
+    return{questionId:sa.questionId,chosenId:sa.chosenId,chosenTitle:chosen.title,altId:s.altId,altTitle:alt.title,phase:sa.phase,age:sa.age};
+  }).sort((a,b)=>a.age-b.age);
+  return{altAttrs:final.bestAltAttrs||state.attrs,altType:final.bestAltType||RESULT_TYPES[RESULT_TYPES.length-1],swapped};
+}
+
+function describeAltLife(altType, altAttrs, myAttrs){
+  const diffs=[];
+  if(altAttrs.career-myAttrs.career>=10) diffs.push('事业上走得更稳');
+  else if(myAttrs.career-altAttrs.career>=10) diffs.push('事业的野心没那么大');
+  if(altAttrs.wealth-myAttrs.wealth>=10) diffs.push('经济上更宽裕');
+  else if(myAttrs.wealth-altAttrs.wealth>=10) diffs.push('在金钱上不那么执着');
+  if(altAttrs.love-myAttrs.love>=10) diffs.push('对爱情投入了更多');
+  else if(myAttrs.love-altAttrs.love>=10) diffs.push('把感情放在了次要位置');
+  if(altAttrs.freedom-myAttrs.freedom>=10) diffs.push('换来了更多的自由');
+  else if(myAttrs.freedom-altAttrs.freedom>=10) diffs.push('为了其他东西牺牲了自由');
+  if(altAttrs.happiness-myAttrs.happiness>=10) diffs.push('日子过得更自在');
+  else if(myAttrs.happiness-altAttrs.happiness>=10) diffs.push('快乐不是那个版本的人生的重点');
+  const profile=altType.profile;
+  let desc=`在另一条路上，你成了「${altType.name}」——`;
+  desc+=`${profile.city}，${profile.job}，年收入 ¥${profile.income}。`;
+  if(diffs.length>0) desc+=`和现在的你相比，那个你${diffs.slice(0,3).join('，')}。`;
+  desc+=`${altType.oneliner}`;
+  return desc;
+}
+
+// ======== DYNAMIC SCENARIOS (stage-aware) ========
+const STAGE_SCENARIOS = {
+  'c1_1':{
+    'stage_junior':'回想毕业那年，你投了一堆简历、面了一圈，最后其实也没什么太多选择。如果回到那个路口，你会怎么选？',
+    'stage_mid':'毕业那年的选择，你到现在还记得。如果时间倒流回那个路口，你会做同样的决定，还是换一条路？',
+    'stage_senior':'毕业那年的选择，你到现在还记得。如果时间倒流回那个路口，你会做同样的决定，还是换一条路？'
+  },
+  'c1_2':{
+    'stage_junior':'又到了续租的时候。房东涨了500，你开始认真想要不要换个地方住。',
+    'stage_mid':'搬过几次家了，每次都要重新算一遍——离公司近还是房租便宜，这道题永远没有满分答案。',
+    'stage_senior':'搬过几次家了，每次都要重新算一遍——离公司近还是房租便宜，这道题永远没有满分答案。'
+  },
+  'c1_3':{
+    'stage_junior':'周五晚上，同事们陆续走了。你看了看还没处理完的事情。',
+    'stage_mid':'周五晚上。你已经不需要别人教你怎么选了——但今天有点犹豫。',
+    'stage_senior':'周五晚上。你已经不需要别人教你怎么选了——但今天有点犹豫。'
+  },
+  'c2_1':{
+    'stage_mid':'一个熟悉的选择又来了——有人问你要不要往上走一步。你已经知道"上去"意味着什么。',
+    'stage_senior':'一个熟悉的选择又来了——有人问你要不要往上走一步。你已经知道"上去"意味着什么。'
+  }
+};
+
+// Previous-choice conditional scenarios
+const CONDITIONAL_SCENARIOS = {
+  's2_2':{conditions:[
+    {prevQ:'s2_1',prevOpts:['s2_gov'],newScenario:'考上了公务员/事业编，入职三个月。你逐渐发现：原来下班之后的时间才是最能定义一个人的东西。'},
+    {prevQ:'s2_1',prevOpts:['s2_gap'],newScenario:'Gap 了一段时间后，你终于找到了工作。入职三个月，你发现：原来下班之后的时间才是最能定义一个人的东西。'}
+  ]},
+  'c1_2':{conditions:[
+    {prevQ:'c1_1',prevOpts:['c1_study'],newScenario:'研究生毕业了，这次真的要面对社会了。到了新城市，找房子才是第一个考验。中介带你看了一圈，预算有限，每个选项都不完美。'},
+    {prevQ:'c1_1',prevOpts:['c1_gov'],newScenario:'顺利上岸了，到了新单位所在的城市。找房子才是入职前的第一个考验。中介带你看了一圈，预算有限，每个选项都不完美。'}
+  ]},
+  'c1_3':{conditions:[
+    {prevQ:'c1_1',prevOpts:['c1_study'],newScenario:'入职半年（虽然比同学晚了两年），你发现同一批进来的人已经分化了。周五晚上，你看了看待办事项。'},
+    {prevQ:'c1_1',prevOpts:['c1_gov'],newScenario:'入职半年，你发现体制内也有自己的节奏。周五下午，其实很多人已经开始收拾东西了。你呢？'}
+  ]}
+};
+
+function getScenario(question){
+  // 1. Check stage-based dynamic scenarios
+  const stageSc = STAGE_SCENARIOS[question.id];
+  if(stageSc && stageSc[state.userStage]) return stageSc[state.userStage];
+  // 2. Check previous-choice conditional scenarios
+  const cond = CONDITIONAL_SCENARIOS[question.id];
+  if(cond){for(const c of cond.conditions){const prev=state.choices.find(ch=>ch.questionId===c.prevQ);if(prev&&c.prevOpts.includes(prev.optionId))return c.newScenario;}}
+  return question.scenario;
+}
+
+// ======== SCREENS ========
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+function startExperiment(){
+  state={timeline:null,riskTaker:false,userStage:'',attrs:{career:50,wealth:50,love:50,freedom:50,happiness:50},choices:[],allQuestions:[],currentQIdx:0,originStep:0,originAnswers:[]};
+  renderOrigin();showScreen('screen-origin');
+}
+function renderOrigin(){
+  const q=ORIGIN_QUESTIONS[state.originStep];
+  document.getElementById('screen-origin').innerHTML=`<div class="origin-step">STEP ${q.step}</div><div class="origin-q">${q.title}</div><div class="origin-options">${q.options.map(o=>`<div class="origin-opt" onclick="selectOrigin(this,'${o.id}')">${o.title}</div>`).join('')}</div>`;
+}
+function selectOrigin(el,optId){
+  document.querySelectorAll('.origin-opt').forEach(e=>e.classList.remove('selected'));el.classList.add('selected');
+  const q=ORIGIN_QUESTIONS[state.originStep];const opt=q.options.find(o=>o.id===optId);
+  state.originAnswers.push({questionId:q.id,optionId:optId});
+  if(state.originStep===0){state.timeline=opt.timeline;state.userStage=optId;}
+  if(state.originStep===1&&opt.effects)ATTRS.forEach(a=>{state.attrs[a]+=opt.effects[a]||0;});
+  if(state.originStep===2){if(opt.effects)ATTRS.forEach(a=>{state.attrs[a]+=opt.effects[a]||0;});state.riskTaker=opt.riskTaker||false;}
+  setTimeout(()=>{state.originStep++;if(state.originStep<ORIGIN_QUESTIONS.length){const s=document.getElementById('screen-origin');s.style.opacity='0';setTimeout(()=>{renderOrigin();s.style.opacity='1';},250);}else{const tl=state.timeline==='student'?STUDENT_TIMELINE:CAREER_TIMELINE;state.allQuestions=[];tl.phases.forEach(p=>{state.allQuestions.push(...p.questions);});state.currentQIdx=0;renderGame();showScreen('screen-game');}},300);
+}
+function renderGame(){
+  const q=state.allQuestions[state.currentQIdx];const tl=state.timeline==='student'?STUDENT_TIMELINE:CAREER_TIMELINE;
+  const phaseInfo=tl.phases[q.phase];const endAge=tl.ages[tl.ages.length-1];const pct=Math.round((state.currentQIdx/state.allQuestions.length)*100);
+  const scenario=getScenario(q);
+  document.getElementById('game-inner').innerHTML=`
+    <div class="progress-wrap"><div class="progress-top"><span class="progress-phase">${phaseInfo.label}</span><span class="progress-age">${q.age} / ${endAge}</span></div><div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div></div>
+    <div class="q-scenario">${scenario}</div>
+    <div class="options" id="options-container">${q.options.map(o=>`<div class="option-card" id="opt-${o.id}" onclick="selectOption('${q.id}','${o.id}')"><div class="option-title">${o.title}</div>${o.desc?`<div class="option-desc">${o.desc}</div>`:''}</div>`).join('')}</div>`;
+}
+function selectOption(qId,optId){
+  const q=state.allQuestions.find(qq=>qq.id===qId);const opt=q.options.find(o=>o.id===optId);
+  state.choices.push({questionId:qId,optionId:optId,phase:q.phase});
+  const eff=applyEffects(opt.effects,q.phase,state.riskTaker,opt.riskBonus);
+  ATTRS.forEach(a=>{state.attrs[a]=clamp(state.attrs[a]+eff[a]);});
+  const selectedCard=document.getElementById('opt-'+optId);
+  document.querySelectorAll('.option-card').forEach(c=>{if(c===selectedCard)c.classList.add('selected');else c.classList.add('disabled');});
+  const tags=ATTRS.map(a=>{const v=Math.round(eff[a]);if(v===0)return '';return`<span class="effect-tag ${v>0?'positive':'negative'}">${ATTR_NAMES[a]} ${v>0?'+':''}${v}</span>`;}).filter(Boolean).join('');
+  const effectsDiv=document.createElement('div');effectsDiv.className='inline-effects';effectsDiv.innerHTML=tags;selectedCard.appendChild(effectsDiv);
+  setTimeout(()=>{effectsDiv.classList.add('hiding');setTimeout(()=>{showTransition(q.transition,()=>{state.currentQIdx++;if(state.currentQIdx<state.allQuestions.length){renderGame();}else{renderResult();showScreen('screen-result');}});},300);},1200);
+}
+function showTransition(text,cb){const overlay=document.getElementById('transition');document.getElementById('transition-text').textContent=text;overlay.classList.add('show');setTimeout(()=>{cb();setTimeout(()=>{overlay.classList.remove('show');},200);},1800);}
+
+// ======== RESULT ========
+function renderResult(){
+  const attrs=state.attrs;const type=matchType(attrs);
+  const parallel=calcParallel(state.choices,state.allQuestions,state.riskTaker,type.id);
+  const p=type.profile;const ap=parallel.altType.profile;
+  const tl=state.timeline==='student'?STUDENT_TIMELINE:CAREER_TIMELINE;const endAge=tl.ages[tl.ages.length-1];
+  const C=type.color;const C20=C+'33';const C40=C+'66';
+  const storyParts=type.story.split('\n\n');const storyLead=storyParts[0].replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+  const storyRest=storyParts.slice(1).map(para=>'<p>'+para.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')+'</p>').join('');
+  const altStoryHtml=parallel.altType.story.split('\n\n').map(para=>'<p>'+para.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')+'</p>').join('');
+  const ATTR_ICONS={career:'💼',wealth:'💰',love:'❤️',freedom:'🕊️',happiness:'✨'};
+  function attrLevel(v){if(v>=75)return['极高'];if(v>=60)return['偏高'];if(v>=45)return['中等'];return['偏低'];}
+  const attrBars=ATTRS.map(a=>{const lvl=attrLevel(attrs[a]);return`<div class="attr-row-enhanced"><div class="attr-icon">${ATTR_ICONS[a]}</div><div class="attr-name" style="width:38px;color:${C};font-size:14px">${ATTR_NAMES_CN[a]}</div><div class="attr-bar-bg" style="flex:1"><div class="attr-bar-enhanced" style="--w:${attrs[a]}%;width:${attrs[a]}%;background:linear-gradient(90deg,${C},${C40});box-shadow:0 0 10px ${C20};animation:barGrow 1s ease both"></div></div><div class="attr-level mid" style="color:${C};background:${C20};border:1px solid ${C20}">${lvl}</div></div>`;}).join('');
+  const altLifeDesc=describeAltLife(parallel.altType,parallel.altAttrs,attrs);
+  const myBars=ATTRS.map(a=>`<div class="col-attr"><div class="a-name" style="color:${C}">${ATTR_NAMES_CN[a]}</div><div class="a-bar-bg"><div class="a-bar" style="width:${attrs[a]}%;background:${C}"></div></div><div class="a-val" style="color:${C}">${attrs[a]}</div></div>`).join('');
+  const altC=parallel.altType.color;
+  const altBars=ATTRS.map(a=>`<div class="col-attr"><div class="a-name" style="color:${altC}">${ATTR_NAMES_CN[a]}</div><div class="a-bar-bg"><div class="a-bar" style="width:${parallel.altAttrs[a]}%;background:${altC}"></div></div><div class="a-val" style="color:${altC}">${parallel.altAttrs[a]}</div></div>`).join('');
+  const diffTags=ATTRS.map(a=>{const d=parallel.altAttrs[a]-attrs[a];if(d===0)return '';return`<span class="diff-tag ${d>0?'up':'down'}">${ATTR_NAMES[a]} ${d>0?'+':''}${d}</span>`;}).filter(Boolean).join('');
+  const altDetailBars=ATTRS.map(a=>`<div class="attr-row"><div class="attr-name" style="color:${altC}">${ATTR_NAMES_CN[a]}</div><div class="attr-bar-bg"><div class="attr-bar" style="--w:${parallel.altAttrs[a]}%;width:${parallel.altAttrs[a]}%;background:${altC}"></div></div><div class="attr-val" style="color:${altC}">${parallel.altAttrs[a]}</div></div>`).join('');
+  const el=document.getElementById('screen-result');
+  // Apply type color as CSS custom properties
+  el.style.setProperty('--tc',C);el.style.setProperty('--tc20',C20);el.style.setProperty('--tc40',C40);
+  el.innerHTML=`
+    <div class="result-header">
+      <div class="result-badge" style="border-color:${C40};color:${C};background:${C20}">人 生 实 验 完 成</div>
+      <div class="result-emoji">${type.emoji}</div>
+      <div class="result-type" style="color:${C};-webkit-text-fill-color:${C};background:none;filter:none;text-shadow:0 0 20px ${C40}">${type.name}</div>
+      <div class="result-oneliner">${type.oneliner}</div>
+      <div class="result-income-tag" style="color:${C};border-color:${C40};background:${C20}">¥${p.income} / 年</div>
+      <div class="result-rarity" style="color:${C};border-color:${C40};background:${C20}"><span class="rarity-dot" style="background:${C};box-shadow:0 0 8px ${C}"></span>人群中 ${type.rarity} 和你是同类</div>
+    </div>
+    <div class="glow-line" style="background:linear-gradient(90deg,transparent,${C40},${C},${C40},transparent)"></div>
+    <div class="profile-card card-decorated" style="border-color:${C20}">
+      <div class="corner-deco tl" style="border-color:${C}"></div><div class="corner-deco tr" style="border-color:${C}"></div><div class="corner-deco bl" style="border-color:${C}"></div><div class="corner-deco br" style="border-color:${C}"></div>
+      <div style="height:2px;background:linear-gradient(90deg,transparent,${C40},transparent);margin-bottom:18px"></div>
+      <div class="section-label" style="color:${C}">📍 你的 ${endAge} 岁</div>
+      <div class="profile-grid">
+        <div class="profile-item" style="border-color:${C20}"><div class="label">🏙️ 城市</div><div class="value">${p.city}</div></div>
+        <div class="profile-item" style="border-color:${C20}"><div class="label">💼 职业</div><div class="value">${p.job}</div></div>
+        <div class="profile-item" style="border-color:${C20}"><div class="label">❤️ 感情</div><div class="value">${p.love}</div></div>
+        <div class="profile-item" style="border-color:${C20}"><div class="label">🏦 存款</div><div class="value">¥${p.savings}</div></div>
+      </div>
+    </div>
+    <div class="radar-wrap card-decorated" style="border-color:${C20}">
+      <div class="corner-deco tl" style="border-color:${C}"></div><div class="corner-deco tr" style="border-color:${C}"></div><div class="corner-deco bl" style="border-color:${C}"></div><div class="corner-deco br" style="border-color:${C}"></div>
+      <div class="section-label" style="color:${C}">🎯 人生属性</div>
+      <canvas id="radar-canvas" width="300" height="300"></canvas>
+    </div>
+    <div class="attrs-list">${attrBars}</div>
+    <div class="glow-line" style="background:linear-gradient(90deg,transparent,${C40},${C},${C40},transparent)"></div>
+    <div class="story-card card-decorated" style="border-color:${C20}">
+      <div class="corner-deco tl" style="border-color:${C}"></div><div class="corner-deco tr" style="border-color:${C}"></div><div class="corner-deco bl" style="border-color:${C}"></div><div class="corner-deco br" style="border-color:${C}"></div>
+      <div class="scan-line" style="background:linear-gradient(90deg,transparent,${C},transparent)"></div>
+      <div class="section-label" style="color:${C}">📖 你的人生故事</div>
+      <div class="story-lead" style="color:#fff">${storyLead}</div>
+      ${storyRest}
+    </div>
+    <div class="glow-line" style="background:linear-gradient(90deg,transparent,${C40},${C},${C40},transparent)"></div>
+    <div class="parallel-section">
+      <div class="parallel-title" style="color:${C}">🌌 如果你选了另一条路…</div>
+      <div class="parallel-changes" style="font-size:13px;color:var(--sub);line-height:1.9;padding:16px;background:var(--card);border:1px solid ${C20};border-radius:var(--radius)">${altLifeDesc}</div>
+      <div class="parallel-compare"><div class="parallel-col mine" style="border-color:${C40}"><div class="col-emoji">${type.emoji}</div><div class="col-type" style="color:${C}">${type.name}</div>${myBars}</div><div class="parallel-col alt" style="border-color:${altC}66"><div class="col-emoji">${parallel.altType.emoji}</div><div class="col-type" style="color:${altC}">${parallel.altType.name}</div>${altBars}</div></div>
+      <div class="parallel-diff">${diffTags}</div>
+      <div class="parallel-hint">${type.parallelHint}</div>
+      <div class="alt-life-btn" onclick="toggleAltLife()" style="color:${altC};border-color:${altC}66;background:${altC}10">👁 查看「${parallel.altType.name}」的完整人生 →</div>
+      <div class="alt-life-detail" id="alt-life-detail">
+        <div class="alt-header"><div class="alt-emoji">${parallel.altType.emoji}</div><div class="alt-type" style="color:${altC}">${parallel.altType.name}</div><div class="alt-oneliner">${parallel.altType.oneliner}</div></div>
+        <div class="glow-line" style="background:linear-gradient(90deg,transparent,${altC}66,${altC},${altC}66,transparent)"></div>
+        <div class="alt-profile"><div class="alt-profile-item" style="border-color:${altC}30"><div class="label">城市</div><div class="value" style="color:${altC}">${ap.city}</div></div><div class="alt-profile-item" style="border-color:${altC}30"><div class="label">职业</div><div class="value" style="color:${altC}">${ap.job}</div></div><div class="alt-profile-item" style="border-color:${altC}30"><div class="label">年收入</div><div class="value" style="color:${altC}">¥${ap.income}</div></div><div class="alt-profile-item" style="border-color:${altC}30"><div class="label">感情</div><div class="value" style="color:${altC}">${ap.love}</div></div></div>
+        ${altDetailBars}
+        <div class="glow-line" style="background:linear-gradient(90deg,transparent,${altC}66,${altC},${altC}66,transparent)"></div>
+        <div class="alt-story">${altStoryHtml}</div>
+      </div>
+    </div>
+    <div class="action-btns"><button class="btn-secondary" onclick="startExperiment()" style="color:${C};border-color:${C40}">🔄 重新开始实验</button></div>`;
+  setTimeout(()=>drawRadar(attrs),100);addParticles();
+  try{localStorage.setItem('life_lab_result',JSON.stringify({type:type.id,attrs,choices:state.choices,timeline:state.timeline,time:Date.now()}));}catch(e){}
+}
+function toggleAltLife(){const d=document.getElementById('alt-life-detail');const b=document.querySelector('.alt-life-btn');if(d.classList.contains('show')){d.classList.remove('show');b.innerHTML=b.innerHTML.replace('收起','查看').replace('↑','→');}else{d.classList.add('show');b.innerHTML=b.innerHTML.replace('查看','收起').replace('→','↑');d.scrollIntoView({behavior:'smooth',block:'nearest'});}}
+function addParticles(){document.querySelectorAll('.card-decorated').forEach(card=>{for(let i=0;i<3;i++){const p=document.createElement('div');p.className='float-particle';p.style.left=(15+Math.random()*70)+'%';p.style.bottom='10px';p.style.animationDelay=Math.random()*4+'s';p.style.animationDuration=(4+Math.random()*4)+'s';card.appendChild(p);}});}
+
+// ======== RADAR ========
+function drawRadar(attrs){
+  const canvas=document.getElementById('radar-canvas');if(!canvas)return;const ctx=canvas.getContext('2d');const dpr=window.devicePixelRatio||1;
+  const type=matchType(attrs);const C=type.color;
+  const sz=300;canvas.width=sz*dpr;canvas.height=sz*dpr;canvas.style.width=sz+'px';canvas.style.height=sz+'px';ctx.scale(dpr,dpr);
+  const cx=sz/2,cy=sz/2,r=110,labels=ATTRS.map(a=>ATTR_NAMES_CN[a]),values=ATTRS.map(a=>attrs[a]/100),n=5,angleStep=(Math.PI*2)/n,startAngle=-Math.PI/2;
+  // Grid rings
+  for(let ring=1;ring<=4;ring++){const rr=r*ring/4;ctx.beginPath();for(let i=0;i<=n;i++){const angle=startAngle+i*angleStep;const x=cx+Math.cos(angle)*rr;const y=cy+Math.sin(angle)*rr;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}ctx.closePath();ctx.strokeStyle=ring===4?C+'30':C+'15';ctx.lineWidth=1;ctx.stroke();}
+  // Spokes
+  for(let i=0;i<n;i++){const angle=startAngle+i*angleStep;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.cos(angle)*r,cy+Math.sin(angle)*r);ctx.strokeStyle=C+'15';ctx.lineWidth=1;ctx.stroke();}
+  // Fill area
+  ctx.beginPath();for(let i=0;i<=n;i++){const idx=i%n;const angle=startAngle+idx*angleStep;const v=values[idx]*r;const x=cx+Math.cos(angle)*v;const y=cy+Math.sin(angle)*v;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}ctx.closePath();
+  ctx.fillStyle=C+'25';ctx.fill();
+  // Stroke with glow
+  ctx.save();ctx.shadowColor=C;ctx.shadowBlur=15;ctx.strokeStyle=C+'cc';ctx.lineWidth=2.5;ctx.stroke();ctx.restore();
+  // Dots + labels — all in type color
+  for(let i=0;i<n;i++){const angle=startAngle+i*angleStep;const v=values[i]*r;const x=cx+Math.cos(angle)*v;const y=cy+Math.sin(angle)*v;
+    ctx.beginPath();ctx.arc(x,y,9,0,Math.PI*2);ctx.fillStyle=C+'25';ctx.fill();
+    ctx.save();ctx.shadowColor=C;ctx.shadowBlur=10;ctx.beginPath();ctx.arc(x,y,4.5,0,Math.PI*2);ctx.fillStyle=C;ctx.fill();ctx.restore();
+    const lx=cx+Math.cos(angle)*(r+28);const ly=cy+Math.sin(angle)*(r+28);
+    ctx.fillStyle=C;ctx.font='700 13px -apple-system,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(labels[i],lx,ly);}
+}
+
+
+document.body.addEventListener('touchmove',function(e){},{passive:true});
+
+// ======== DECORATIONS ========
+(function(){
+  const container=document.getElementById('stars-bg');
+  for(let i=0;i<120;i++){
+    const star=document.createElement('div');star.className='star';
+    star.style.left=Math.random()*100+'%';star.style.top=Math.random()*100+'%';
+    star.style.animationDelay=Math.random()*5+'s';star.style.animationDuration=(2+Math.random()*5)+'s';
+    if(Math.random()>0.5){star.style.width=star.style.height='3px';star.style.background='rgba(124,131,253,0.6)';star.style.boxShadow='0 0 4px rgba(124,131,253,0.3)';}
+    if(Math.random()>0.75){star.style.width=star.style.height='4px';star.style.background='rgba(0,212,255,0.7)';star.style.boxShadow='0 0 8px rgba(0,212,255,0.5)';}
+    if(Math.random()>0.92){star.style.width=star.style.height='5px';star.style.background='rgba(255,255,255,0.8)';star.style.boxShadow='0 0 12px rgba(0,212,255,0.6)';}
+    container.appendChild(star);
+  }
+  // Orbit rings on home
+  const orbits=document.getElementById('home-orbits');
+  if(orbits){
+    [80,120,160].forEach((r,idx)=>{
+      const ring=document.createElement('div');ring.className='orbit-ring';ring.style.width=ring.style.height=r*2+'px';orbits.appendChild(ring);
+      const dot=document.createElement('div');dot.className='orbit-dot';dot.style.setProperty('--orbit-r',r+'px');dot.style.animationDuration=(12+idx*6)+'s';dot.style.animationDelay=idx*2+'s';orbits.appendChild(dot);
+    });
+  }
+  // Hex dots for PC
+  if(window.innerWidth>=1024){
+    const positions=[[5,20],[8,50],[6,80],[92,25],[94,55],[91,85],[3,35],[97,40],[5,65],[95,70]];
+    positions.forEach(([x,y])=>{const dot=document.createElement('div');dot.className='hex-dot';dot.style.left=x+'%';dot.style.top=y+'%';document.body.appendChild(dot);});
+  }
+})();
+</script>
+</body>
+</html>
